@@ -1,0 +1,115 @@
+/* ─── Shared Components ──────────────────────────────── */
+
+/* Logo mark */
+.logo-mark {
+  position: absolute; top: 32px; right: 48px;
+  display: flex; align-items: center; gap: 10px; z-index: 10;
+}
+.logo-h {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 17px;
+}
+.logo-text { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
+
+/* Eyebrow chip */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue-xlight); color: var(--blue);
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 100px; margin-bottom: 18px;
+}
+.eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+
+/* Slide header */
+.slide-header { padding: 44px 64px 0; }
+.slide-title { font-size: 52px; font-weight: 800; color: var(--ink); line-height: 1.05; letter-spacing: -.03em; }
+.slide-title span { color: var(--blue); }
+.slide-sub { font-size: 16px; color: var(--ink-light); margin-top: 10px; font-weight: 400; line-height: 1.5; }
+
+/* Cards */
+.card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-sm); padding: 28px;
+}
+.card-blue  { background: var(--blue); border-color: transparent; color: #fff; }
+.card-light { background: var(--blue-xlight); border-color: transparent; }
+
+/* Tags */
+.tag         { display: inline-flex; align-items: center; background: var(--blue-xlight); color: var(--blue); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 100px; }
+.tag-green   { background: #EDFAF4; color: #0E8A4A; }
+.tag-orange  { background: #FFF5EA; color: #C47A0A; }
+
+/* Discovery Q cards */
+.q-card { background: var(--blue-xlight); border-radius: var(--r-sm); padding: 13px 16px; display: flex; align-items: flex-start; gap: 10px; }
+.q-num  { min-width: 22px; height: 22px; background: var(--blue); color: #fff; border-radius: 6px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.q-text { font-size: 13px; color: var(--ink-mid); font-weight: 500; line-height: 1.4; }
+
+/* Screenshot placeholder */
+.ph {
+  background: var(--blue-xlight); border: 2px dashed var(--border);
+  border-radius: var(--r-md);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  color: var(--ink-light);
+}
+.ph-icon { width: 40px; height: 40px; background: var(--white); border-radius: 10px; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; }
+.ph-icon svg { width: 20px; height: 20px; stroke: var(--blue); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ph-label { font-size: 12px; font-weight: 600; }
+.ph-sub   { font-size: 11px; color: var(--ink-xlight); }
+
+/* Icon wrap */
+.icon-wrap { width: 48px; height: 48px; border-radius: 13px; background: var(--blue-xlight); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.icon-wrap svg { width: 24px; height: 24px; stroke: var(--blue); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Two-column discovery layout */
+.mod-layout { display: flex; flex: 1; min-height: 0; }
+.mod-col-left {
+  width: 476px; flex-shrink: 0;
+  padding: 20px 32px 36px 64px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.mod-col-right {
+  flex: 1; background: var(--blue-xlight);
+  padding: 32px 48px 32px 32px;
+  display: flex; flex-direction: column; gap: 11px;
+  overflow-y: auto;
+}
+.mod-col-right-title {
+  font-size: 14px; font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+}
+.big-ph {
+  flex: 1; border-radius: var(--r-lg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+}
+.big-ph .icon { width: 52px; height: 52px; background: var(--blue-xlight); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+.big-ph .icon svg { width: 26px; height: 26px; stroke: var(--blue); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.big-ph .lbl  { font-size: 13px; font-weight: 600; color: var(--ink-light); }
+.big-ph .sub  { font-size: 11px; color: var(--ink-xlight); }
+
+/* Mexico vs Colombia mini strip */
+.mx-co {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.mx-co-cell {
+  border-radius: var(--r-sm); padding: 11px 14px;
+}
+.mx-co-label { font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 3px; }
+.mx-co-value { font-size: 12px; font-weight: 500; }
+
+/* Info note bar */
+.note-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--blue-xlight); border-radius: var(--r-sm); padding: 11px 18px;
+}
+.note-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+.note-bar-text { font-size: 13px; color: var(--blue); font-weight: 500; }
+
+/* Blinking cursor */
+.cursor { width: 2px; height: 14px; background: var(--blue); display: inline-block; animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Hover card lift */
+.lift { transition: box-shadow .25s, transform .25s, border-color .25s; }
+.lift:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--blue-mid); }

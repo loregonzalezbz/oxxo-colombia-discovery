@@ -1,0 +1,182 @@
+/* ─── Slide 1 · Cover ────────────────────────────────── */
+#s1 .canvas {
+  background: linear-gradient(145deg, #080F28 0%, #1A2E7A 55%, #2F4CB5 100%);
+  display: flex;
+}
+.s1-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+.s1-orb {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(100,140,255,.18), transparent 70%);
+}
+.s1-content { position: relative; z-index: 2; display: flex; align-items: center; width: 100%; padding: 72px 96px 72px 88px; gap: 48px; }
+.s1-left { flex: 1; }
+.s1-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.1); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.88); font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  padding: 7px 16px; border-radius: 100px; margin-bottom: 28px;
+}
+.s1-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #7B9EFF; }
+.s1-title { font-size: 72px; font-weight: 900; color: #fff; line-height: .96; letter-spacing: -.04em; margin-bottom: 10px; }
+.s1-title .accent { color: #7B9EFF; }
+.s1-discovery { font-size: 24px; font-weight: 700; color: rgba(255,255,255,.72); letter-spacing: -.01em; margin-bottom: 20px; }
+.s1-sub { font-size: 15px; color: rgba(255,255,255,.45); max-width: 400px; line-height: 1.65; }
+.s1-meta { display: flex; gap: 28px; margin-top: 44px; }
+.s1-meta-item { display: flex; flex-direction: column; gap: 4px; }
+.s1-meta-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .1em; }
+.s1-meta-value { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.75); }
+.s1-right { width: 360px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.s1-illus { width: 320px; height: 320px; position: relative; }
+.s1-float {
+  position: absolute; background: rgba(255,255,255,.07);
+  backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--r-lg); padding: 16px 20px; color: #fff;
+}
+.s1-float-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.5); margin-bottom: 8px; }
+.s1-chip { display: inline-flex; background: rgba(255,255,255,.1); padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; margin: 2px; }
+.s1-stat { text-align: center; }
+.s1-stat-num { font-size: 32px; font-weight: 900; }
+.s1-stat-lbl { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 3px; }
+.s1-logo { position: absolute; top: 30px; right: 44px; display: flex; align-items: center; gap: 10px; z-index: 10; }
+.s1-logo-h { width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 17px; }
+.s1-logo-text { font-size: 15px; font-weight: 700; color: rgba(255,255,255,.75); }
+
+/* ─── Slide 2 · Objetivo ─────────────────────────────── */
+#s2 .canvas { display: flex; flex-direction: column; }
+.s2-body { flex: 1; display: flex; align-items: center; padding: 0 64px 48px; gap: 36px; min-height: 0; }
+.s2-quote {
+  flex: 1; background: var(--blue-xlight); border-radius: var(--r-xl); padding: 48px 52px; position: relative; overflow: hidden;
+}
+.s2-qmark { position: absolute; top: -20px; left: 32px; font-size: 140px; font-weight: 900; color: var(--blue); opacity: .1; line-height: 1; pointer-events: none; }
+.s2-quote-text { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.55; position: relative; z-index: 1; max-width: 580px; }
+.s2-quote-text em { color: var(--blue); font-style: normal; }
+.s2-pills { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; position: relative; z-index: 1; }
+.s2-pill { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--ink-mid); }
+.s2-pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.s2-side { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; }
+.s2-stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+.s2-stat-num { font-size: 38px; font-weight: 800; color: var(--blue); letter-spacing: -.03em; }
+.s2-stat-lbl { font-size: 13px; color: var(--ink-light); margin-top: 3px; font-weight: 500; }
+.s2-cta { background: var(--blue); border-radius: var(--r-md); padding: 20px 22px; }
+.s2-cta-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.s2-cta-body  { font-size: 12px; color: rgba(255,255,255,.65); line-height: 1.5; }
+
+/* ─── Slide 3 · Agenda ───────────────────────────────── */
+#s3 .canvas { display: flex; flex-direction: column; }
+.s3-body { flex: 1; display: flex; align-items: center; padding: 0 60px 52px; }
+.timeline { width: 100%; display: flex; align-items: flex-start; }
+.tl-item { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.tl-item:not(:last-child)::after { content: ''; position: absolute; top: 27px; left: calc(50% + 27px); right: calc(-50% + 27px); height: 2px; background: var(--border); }
+.tl-bubble-wrap { position: relative; z-index: 1; margin-bottom: 18px; }
+.tl-bubble { width: 54px; height: 54px; border-radius: 50%; background: var(--white); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: var(--ink-light); }
+.tl-item.active .tl-bubble { background: var(--blue); border-color: var(--blue); color: #fff; box-shadow: 0 0 0 7px rgba(47,76,181,.12); }
+.tl-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 18px 14px; width: 100%; max-width: 190px; text-align: center; box-shadow: var(--shadow-sm); }
+.tl-item.active .tl-card { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47,76,181,.1), var(--shadow-sm); }
+.tl-card-icon { margin-bottom: 8px; display: flex; justify-content: center; }
+.tl-card-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke: var(--ink-light); }
+.tl-item.active .tl-card-icon svg { stroke: var(--blue); }
+.tl-card-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.tl-card-sub  { font-size: 11px; color: var(--ink-light); margin-top: 3px; line-height: 1.4; }
+.tl-badge { display: inline-flex; align-items: center; background: var(--blue-xlight); color: var(--blue); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px; margin-top: 8px; }
+.tl-item.active .tl-badge { background: var(--blue); color: #fff; }
+
+/* ─── Slide 4 · Módulos ──────────────────────────────── */
+#s4 .canvas { display: flex; flex-direction: column; }
+.s4-body { flex: 1; padding: 20px 64px 44px; display: flex; align-items: center; }
+.mod-grid { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.mod-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: 26px 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-sm); }
+.mod-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--blue-mid); }
+.mod-icon { width: 50px; height: 50px; border-radius: 13px; background: var(--blue-xlight); display: flex; align-items: center; justify-content: center; }
+.mod-icon svg { width: 24px; height: 24px; fill: none; stroke: var(--blue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mod-card-name { font-size: 16px; font-weight: 700; color: var(--ink); }
+.mod-card-desc { font-size: 12px; color: var(--ink-light); line-height: 1.55; }
+
+/* ─── Slide 5 · Estado México ────────────────────────── */
+#s5 .canvas { display: flex; flex-direction: column; }
+.s5-body { flex: 1; padding: 16px 64px 36px; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+.ss-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.ss-item { background: var(--blue-xlight); border: 2px dashed var(--border); border-radius: var(--r-md); aspect-ratio: 16/9.5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.ss-item-icon { width: 34px; height: 34px; background: var(--white); border-radius: 9px; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; }
+.ss-item-icon svg { width: 16px; height: 16px; fill: none; stroke: var(--blue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ss-item-name { font-size: 11px; font-weight: 700; color: var(--ink-mid); }
+
+/* ─── Slide 9 · Gestión de Servicios ────────────────── */
+#s9 .canvas { display: flex; flex-direction: column; }
+.s9-body { flex: 1; display: flex; min-height: 0; }
+.s9-left { flex: 1; padding: 16px 28px 36px 64px; display: flex; flex-direction: column; }
+.svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; flex: 1; }
+.svc-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow-sm); }
+.svc-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--blue-xlight); display: flex; align-items: center; justify-content: center; }
+.svc-icon svg { width: 18px; height: 18px; fill: none; stroke: var(--blue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.svc-name  { font-size: 13px; font-weight: 700; color: var(--ink); }
+.svc-desc  { font-size: 11px; color: var(--ink-light); line-height: 1.4; }
+.s9-right  { width: 300px; flex-shrink: 0; background: var(--blue-xlight); padding: 24px 36px 36px 22px; display: flex; flex-direction: column; gap: 10px; }
+
+/* ─── Slide 10 · Onboarding ──────────────────────────── */
+#s10 .canvas { display: flex; flex-direction: column; }
+.s10-body { flex: 1; display: flex; min-height: 0; }
+.s10-left { flex: 1; padding: 16px 28px 36px 64px; display: flex; flex-direction: column; gap: 18px; }
+.flow { display: flex; align-items: center; flex: 1; }
+.flow-step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.flow-step:not(:last-child)::after { content: ''; position: absolute; top: 27px; left: calc(50% + 27px); right: calc(-50% + 27px); height: 2px; background: var(--border); }
+.flow-node { position: relative; z-index: 1; width: 54px; height: 54px; border-radius: 50%; background: var(--white); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); margin-bottom: 10px; }
+.flow-node svg { width: 22px; height: 22px; fill: none; stroke: var(--ink-light); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.flow-step.hl .flow-node { background: var(--blue); border-color: var(--blue); box-shadow: 0 0 0 6px rgba(47,76,181,.12); }
+.flow-step.hl .flow-node svg { stroke: #fff; }
+.flow-label { font-size: 11px; font-weight: 700; color: var(--ink-mid); text-align: center; }
+.flow-step.hl .flow-label { color: var(--blue); }
+.ob-detail { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px 18px; }
+.ob-detail-title { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.ob-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ob-chip { background: var(--blue-xlight); color: var(--blue); font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 100px; }
+.s10-right { width: 300px; flex-shrink: 0; background: var(--blue-xlight); padding: 24px 36px 36px 22px; display: flex; flex-direction: column; gap: 10px; }
+
+/* ─── Slide 12 · Resumen ─────────────────────────────── */
+#s12 .canvas { display: flex; flex-direction: column; }
+.s12-body { flex: 1; padding: 16px 64px 40px; display: flex; flex-direction: column; gap: 12px; }
+.def-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.def-table th {
+  background: var(--blue-xlight); color: var(--ink-mid); font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .07em; padding: 13px 18px; text-align: left;
+}
+.def-table th:first-child { border-radius: var(--r-sm) 0 0 var(--r-sm); }
+.def-table th:last-child  { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.def-table td { padding: 13px 18px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--ink-mid); vertical-align: middle; }
+.def-table tr:last-child td { border-bottom: none; }
+.def-table td:first-child { font-weight: 600; color: var(--ink); }
+.def-editable { display: flex; align-items: center; gap: 6px; }
+.def-line { flex: 1; height: 1px; background: var(--border); min-width: 70px; }
+.def-mod-name { display: flex; align-items: center; gap: 8px; }
+.def-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+
+/* ─── Slide 13 · Próximos pasos ──────────────────────── */
+#s13 .canvas { display: flex; flex-direction: column; }
+.s13-body { flex: 1; padding: 20px 64px 44px; display: flex; flex-direction: column; justify-content: center; gap: 28px; }
+.roadmap { display: flex; align-items: flex-start; }
+.rm-item { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.rm-item:not(:last-child)::after { content: ''; position: absolute; top: 27px; left: calc(50% + 27px); right: calc(-50% + 27px); height: 2px; background: var(--border); }
+.rm-node { position: relative; z-index: 1; width: 54px; height: 54px; border-radius: 50%; background: var(--white); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.rm-node svg { width: 22px; height: 22px; fill: none; stroke: var(--ink-light); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.rm-item.done    .rm-node { background: var(--blue); border-color: var(--blue); }
+.rm-item.done    .rm-node svg { stroke: #fff; }
+.rm-item.current .rm-node { border-color: var(--blue); box-shadow: 0 0 0 7px rgba(47,76,181,.12); }
+.rm-item.current .rm-node svg { stroke: var(--blue); }
+.rm-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 15px 12px; width: 100%; max-width: 186px; text-align: center; box-shadow: var(--shadow-sm); }
+.rm-item.current .rm-card { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47,76,181,.1), var(--shadow-sm); }
+.rm-card-title  { font-size: 13px; font-weight: 700; color: var(--ink); }
+.rm-card-sub    { font-size: 11px; color: var(--ink-light); margin-top: 3px; line-height: 1.4; }
+.rm-status { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; }
+.rm-status-dot  { width: 6px; height: 6px; border-radius: 50%; }
+.rm-status-text { font-size: 10px; font-weight: 700; }
+.s13-cta { display: flex; align-items: center; justify-content: space-between; background: var(--blue); border-radius: var(--r-lg); padding: 22px 30px; }
+.s13-cta-text { font-size: 17px; font-weight: 700; color: #fff; }
+.s13-cta-sub  { font-size: 13px; color: rgba(255,255,255,.55); margin-top: 3px; }
+.s13-cta-btn  { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 10px; padding: 11px 22px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: background .2s; }
+.s13-cta-btn:hover { background: rgba(255,255,255,.25); }

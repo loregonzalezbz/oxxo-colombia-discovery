@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="OXXO Colombia · Discovery de Implementación · Humand" />
+  <title>OXXO Colombia — Discovery · Humand</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/slides.css" />
+</head>
+<body>
+
+<!-- Progress bar -->
+<div id="progress"></div>
+
+<!-- ─── Deck ─────────────────────────────────────────── -->
+<div id="deck">
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 1 · COVER
+  ═══════════════════════════════════════════ -->
+  <div class="slide active" id="s1" role="region" aria-label="Portada">
+    <div class="canvas">
+      <div class="s1-grid"></div>
+      <div class="s1-orb" style="width:700px;height:700px;top:-220px;right:-120px;"></div>
+      <div class="s1-orb" style="width:360px;height:360px;bottom:-100px;left:40px;"></div>
+
+      <div class="s1-logo">
+        <div class="s1-logo-h">H</div>
+        <span class="s1-logo-text">Humand</span>
+      </div>
+
+      <div class="s1-content">
+        <div class="s1-left">
+          <div class="s1-badge">
+            <span class="s1-badge-dot"></span>
+            Discovery Workshop
+          </div>
+          <div class="s1-title">OXXO<br/><span class="accent">Colombia</span></div>
+          <div class="s1-discovery">Discovery de Implementación</div>
+          <div class="s1-sub">Definición funcional basada en la experiencia de OXXO México</div>
+          <div class="s1-meta">
+            <div class="s1-meta-item">
+              <span class="s1-meta-label">Proyecto</span>
+              <span class="s1-meta-value">Implementación Humand</span>
+            </div>
+            <div class="s1-meta-item">
+              <span class="s1-meta-label">Tipo</span>
+              <span class="s1-meta-value">Discovery Workshop</span>
+            </div>
+            <div class="s1-meta-item">
+              <span class="s1-meta-label">Módulos</span>
+              <span class="s1-meta-value">6 contratados</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="s1-right">
+          <div class="s1-illus">
+            <!-- Floating card: módulos -->
+            <div class="s1-float" style="top:18px;left:0;width:210px;">
+              <div class="s1-float-label">Módulos</div>
+              <div>
+                <span class="s1-chip">Comunicación</span>
+                <span class="s1-chip">Onboarding</span>
+                <span class="s1-chip">Chatbot AI</span>
+                <span class="s1-chip">+3 más</span>
+              </div>
+            </div>
+            <!-- Floating card: stat -->
+            <div class="s1-float s1-stat" style="top:148px;right:6px;width:118px;">
+              <div class="s1-stat-num">6</div>
+              <div class="s1-stat-lbl">Módulos<br>contratados</div>
+            </div>
+            <!-- Floating card: referencia -->
+            <div class="s1-float" style="bottom:32px;right:0;width:218px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:#fff;">México → Colombia</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;">Implementación referencia</div>
+                </div>
+              </div>
+            </div>
+            <!-- Decorative rings -->
+            <div style="position:absolute;bottom:8px;left:24px;width:90px;height:90px;border-radius:50%;border:2px solid rgba(255,255,255,.08);"></div>
+            <div style="position:absolute;bottom:24px;left:40px;width:58px;height:58px;border-radius:50%;border:2px solid rgba(255,255,255,.12);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 2 · OBJETIVO
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s2" role="region" aria-label="Objetivo">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Sesión</div>
+        <div class="slide-title">Objetivo de la <span>sesión</span></div>
+      </div>
+      <div class="s2-body">
+        <div class="s2-quote">
+          <div class="s2-qmark">"</div>
+          <div class="s2-quote-text">
+            Revisaremos cómo está configurado actualmente <em>OXXO México</em> para definir, junto al equipo de Colombia, qué procesos desean <em>implementar, priorizar y adaptar</em> a su operación.
+          </div>
+          <div class="s2-pills">
+            <div class="s2-pill"><span class="s2-pill-dot" style="background:var(--blue);"></span>Referencia México</div>
+            <div class="s2-pill"><span class="s2-pill-dot" style="background:#0E8A4A;"></span>Decisiones Colombia</div>
+            <div class="s2-pill"><span class="s2-pill-dot" style="background:#C47A0A;"></span>Adaptaciones locales</div>
+          </div>
+        </div>
+        <div class="s2-side">
+          <div class="s2-stat-card">
+            <div class="s2-stat-num">6</div>
+            <div class="s2-stat-lbl">Módulos a definir</div>
+          </div>
+          <div class="s2-stat-card">
+            <div class="s2-stat-num" style="font-size:28px;letter-spacing:-.02em;">OXXO MX</div>
+            <div class="s2-stat-lbl">Base de referencia</div>
+          </div>
+          <div class="s2-cta">
+            <div class="s2-cta-title">Resultado esperado</div>
+            <div class="s2-cta-body">Plan de configuración personalizado para la operación de Colombia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 3 · AGENDA
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s3" role="region" aria-label="Agenda">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Workshop</div>
+        <div class="slide-title">Agenda del <span>día</span></div>
+        <div class="slide-sub">Estructura de la sesión de discovery</div>
+      </div>
+      <div class="s3-body">
+        <div class="timeline">
+
+          <div class="tl-item">
+            <div class="tl-bubble-wrap"><div class="tl-bubble">1</div></div>
+            <div class="tl-card">
+              <div class="tl-card-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              </div>
+              <div class="tl-card-name">Objetivo</div>
+              <div class="tl-card-sub">Contexto y alcance del workshop</div>
+              <div class="tl-badge">10 min</div>
+            </div>
+          </div>
+
+          <div class="tl-item active">
+            <div class="tl-bubble-wrap"><div class="tl-bubble">2</div></div>
+            <div class="tl-card">
+              <div class="tl-card-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+              </div>
+              <div class="tl-card-name">Estado México</div>
+              <div class="tl-card-sub">Revisión implementación actual</div>
+              <div class="tl-badge">20 min</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-bubble-wrap"><div class="tl-bubble">3</div></div>
+            <div class="tl-card">
+              <div class="tl-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="tl-card-name">Discovery</div>
+              <div class="tl-card-sub">Por módulo con preguntas clave</div>
+              <div class="tl-badge">60 min</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-bubble-wrap"><div class="tl-bubble">4</div></div>
+            <div class="tl-card">
+              <div class="tl-card-icon">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="tl-card-name">Priorización</div>
+              <div class="tl-card-sub">Definir orden de implementación</div>
+              <div class="tl-badge">20 min</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-bubble-wrap"><div class="tl-bubble">5</div></div>
+            <div class="tl-card">
+              <div class="tl-card-icon">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </div>
+              <div class="tl-card-name">Próximos pasos</div>
+              <div class="tl-card-sub">Plan y responsables</div>
+              <div class="tl-badge">10 min</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 4 · MÓDULOS CONTRATADOS
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s4" role="region" aria-label="Módulos contratados">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Alcance</div>
+        <div class="slide-title">Módulos <span>contratados</span></div>
+        <div class="slide-sub">Los 6 módulos que se definirán en este discovery</div>
+      </div>
+      <div class="s4-body">
+        <div class="mod-grid">
+
+          <div class="mod-card lift">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="mod-card-name">Comunicación</div>
+            <div class="mod-card-desc">Noticias, anuncios y comunicados segmentados por área o rol</div>
+            <span class="tag">Módulo 1</span>
+          </div>
+
+          <div class="mod-card lift">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8"/><path d="M12 12v4"/><path d="M10 14h4"/></svg>
+            </div>
+            <div class="mod-card-name">Gestión de Servicios</div>
+            <div class="mod-card-desc">Catálogo de tickets y servicios internos con flujos de aprobación</div>
+            <span class="tag">Módulo 2</span>
+          </div>
+
+          <div class="mod-card lift">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="mod-card-name">Onboarding 2.0</div>
+            <div class="mod-card-desc">Flujo completo de ingreso, documentos, tareas y capacitaciones</div>
+            <span class="tag">Módulo 3</span>
+          </div>
+
+          <div class="mod-card lift">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="8.5" cy="10" r="1.5"/><circle cx="15.5" cy="10" r="1.5"/><path d="M9 13a3 3 0 0 0 6 0"/></svg>
+            </div>
+            <div class="mod-card-name">Chatbot AI</div>
+            <div class="mod-card-desc">Asistente inteligente para resolver consultas frecuentes</div>
+            <span class="tag">Módulo 4</span>
+          </div>
+
+          <div class="mod-card lift">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="mod-card-name">Reconocimientos</div>
+            <div class="mod-card-desc">Programa de reconocimiento entre colaboradores y campañas</div>
+            <span class="tag">Módulo 5</span>
+          </div>
+
+          <div class="mod-card lift">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="mod-card-name">Documentos Personales</div>
+            <div class="mod-card-desc">Repositorio digital de documentos laborales por colaborador</div>
+            <span class="tag">Módulo 6</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 5 · ESTADO MÉXICO
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s5" role="region" aria-label="Estado México">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Referencia</div>
+        <div class="slide-title">¿Cómo funciona <span>OXXO México</span>?</div>
+      </div>
+      <div class="s5-body">
+        <div class="ss-grid">
+
+          <div class="ss-item">
+            <div class="ss-item-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="ss-item-name">Comunicación</div>
+          </div>
+
+          <div class="ss-item">
+            <div class="ss-item-icon">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="ss-item-name">Reconocimientos</div>
+          </div>
+
+          <div class="ss-item">
+            <div class="ss-item-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8"/><path d="M12 12v4"/><path d="M10 14h4"/></svg>
+            </div>
+            <div class="ss-item-name">Service Management</div>
+          </div>
+
+          <div class="ss-item">
+            <div class="ss-item-icon">
+              <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            </div>
+            <div class="ss-item-name">Onboarding</div>
+          </div>
+
+          <div class="ss-item">
+            <div class="ss-item-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="ss-item-name">Documentos</div>
+          </div>
+
+          <div class="ss-item">
+            <div class="ss-item-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><circle cx="15.5" cy="10" r="1.5"/><path d="M9 13a3 3 0 0 0 6 0"/></svg>
+            </div>
+            <div class="ss-item-name">Chatbot AI</div>
+          </div>
+
+        </div>
+        <div class="note-bar">
+          <div class="note-bar-dot"></div>
+          <div class="note-bar-text">Tomaremos la implementación actual de México como punto de partida para el discovery.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 6 · COMUNICACIÓN
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s6" role="region" aria-label="Comunicación">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:36px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 1</div>
+        <div class="slide-title">Comuni<span>cación</span></div>
+      </div>
+      <div class="mod-layout" style="flex:1;margin-top:18px;min-height:0;">
+        <div class="mod-col-left">
+          <div class="big-ph ph" style="background:var(--blue-xlight);border:2px dashed var(--border);">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div class="lbl">Screenshot OXXO México</div>
+            <div class="sub">Módulo Comunicación</div>
+          </div>
+          <div class="mx-co">
+            <div class="mx-co-cell" style="background:var(--blue-xlight);">
+              <div class="mx-co-label" style="color:var(--ink-mid);">México</div>
+              <div class="mx-co-value" style="color:var(--ink-mid);">Noticias, encuestas, videos</div>
+            </div>
+            <div class="mx-co-cell" style="background:var(--blue);">
+              <div class="mx-co-label" style="color:rgba(255,255,255,.6);">Colombia</div>
+              <div class="mx-co-value" style="color:rgba(255,255,255,.85);">Por definir →</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-col-right">
+          <div class="mod-col-right-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué tipo de comunicación desean publicar? (noticias, encuestas, videos)</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién administrará las noticias? ¿Un equipo central o cada área?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Cómo segmentarán la comunicación? ¿Por área, región o tienda?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Qué grupos de comunicación necesitan crear?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Qué contenidos son prioritarios para el lanzamiento?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 7 · RECONOCIMIENTOS
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s7" role="region" aria-label="Reconocimientos">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:36px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 5</div>
+        <div class="slide-title">Recono<span>cimientos</span></div>
+      </div>
+      <div class="mod-layout" style="flex:1;margin-top:18px;min-height:0;">
+        <div class="mod-col-left">
+          <div class="big-ph ph" style="background:var(--blue-xlight);border:2px dashed var(--border);">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div class="lbl">Screenshot OXXO México</div>
+            <div class="sub">Módulo Reconocimientos</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:12px 10px;text-align:center;">
+              <div style="font-size:22px;">⭐</div>
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);margin-top:4px;">Entre pares</div>
+            </div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:12px 10px;text-align:center;">
+              <div style="font-size:22px;">🏆</div>
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);margin-top:4px;">Campañas</div>
+            </div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:12px 10px;text-align:center;">
+              <div style="font-size:22px;">👑</div>
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);margin-top:4px;">Líderes</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-col-right">
+          <div class="mod-col-right-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué comportamientos o logros quieren reconocer?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién puede dar reconocimientos? ¿Todos los colaboradores o solo líderes?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Será entre colaboradores, solo líderes a equipos, o ambos?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Habrá campañas especiales? (cumpleaños, aniversarios, logros)</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Necesitan categorías o "valores" asociados a los reconocimientos?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 8 · CHATBOT AI
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s8" role="region" aria-label="Chatbot AI">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:36px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 4</div>
+        <div class="slide-title">Chatbot <span>AI</span></div>
+      </div>
+      <div class="mod-layout" style="flex:1;margin-top:18px;min-height:0;">
+        <div class="mod-col-left">
+          <div class="big-ph ph" style="background:var(--blue-xlight);border:2px dashed var(--border);">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><circle cx="15.5" cy="10" r="1.5"/><path d="M9 13a3 3 0 0 0 6 0"/><path d="M8 21h8"/><path d="M12 17v4"/></svg></div>
+            <div class="lbl">Screenshot OXXO México</div>
+            <div class="sub">Módulo Chatbot AI</div>
+          </div>
+          <!-- mini chat mockup -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <div style="width:26px;height:26px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0;">H</div>
+              <div style="background:var(--blue-xlight);border-radius:0 10px 10px 10px;padding:8px 12px;font-size:12px;color:var(--ink-mid);">¿En qué puedo ayudarte hoy?</div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <div style="background:var(--blue);border-radius:10px 0 10px 10px;padding:8px 12px;font-size:12px;color:#fff;">¿Cuáles son los beneficios?</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-col-right">
+          <div class="mod-col-right-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué preguntas reciben frecuentemente de los colaboradores?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Qué información debería conocer el chatbot? (políticas, beneficios, procesos)</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Qué procesos quieren automatizar a través del chatbot?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Necesitan integraciones con otros sistemas? (HRIS, nómina)</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Cómo manejarán las consultas que el chatbot no pueda resolver?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 9 · GESTIÓN DE SERVICIOS
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s9" role="region" aria-label="Gestión de Servicios">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:32px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 2</div>
+        <div class="slide-title">Gestión de <span>Servicios</span></div>
+      </div>
+      <div class="s9-body">
+        <div class="s9-left">
+          <div style="font-size:12px;font-weight:700;color:var(--ink-mid);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 10px;">Catálogo de servicios</div>
+          <div class="svc-grid">
+
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+              <div class="svc-name">RRHH</div>
+              <div class="svc-desc">Permisos, constancias, actualizaciones</div>
+            </div>
+
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg></div>
+              <div class="svc-name">TI</div>
+              <div class="svc-desc">Equipos, accesos, soporte técnico</div>
+            </div>
+
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+              <div class="svc-name">Nómina</div>
+              <div class="svc-desc">Consultas de pago, recibos, descuentos</div>
+            </div>
+
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+              <div class="svc-name">Infraestructura</div>
+              <div class="svc-desc">Instalaciones, mobiliario, espacios</div>
+            </div>
+
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+              <div class="svc-name">Operaciones</div>
+              <div class="svc-desc">Procesos, logística, tiendas</div>
+            </div>
+
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+              <div class="svc-name">Beneficios</div>
+              <div class="svc-desc">Seguros, descuentos, convenios</div>
+            </div>
+
+          </div>
+        </div>
+        <div class="s9-right">
+          <div class="mod-col-right-title" style="font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué servicios tendrá el catálogo inicial?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién atenderá cada categoría de servicio?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Habrá SLA definidos por tipo de solicitud?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Necesitan flujos de aprobación? ¿De cuántos niveles?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Cómo desean clasificar y priorizar los tickets?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 10 · ONBOARDING 2.0
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s10" role="region" aria-label="Onboarding 2.0">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:32px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 3</div>
+        <div class="slide-title">Onboarding <span>2.0</span></div>
+      </div>
+      <div class="s10-body">
+        <div class="s10-left">
+          <div class="flow">
+            <div class="flow-step hl">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+              <div class="flow-label">Ingreso</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="flow-label">Documentos</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div class="flow-label">Tareas</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+              <div class="flow-label">Capacitaciones</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+              <div class="flow-label">Primer día</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+              <div class="flow-label">Seguimiento</div>
+            </div>
+          </div>
+          <div class="ob-detail">
+            <div class="ob-detail-title">Estructura en México</div>
+            <div class="ob-chips">
+              <span class="ob-chip">Pre-ingreso</span>
+              <span class="ob-chip">Bienvenida</span>
+              <span class="ob-chip">Firma docs</span>
+              <span class="ob-chip">Inducción</span>
+              <span class="ob-chip">30 días</span>
+              <span class="ob-chip">60 días</span>
+              <span class="ob-chip">90 días</span>
+            </div>
+          </div>
+        </div>
+        <div class="s10-right">
+          <div class="mod-col-right-title" style="font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué documentos deben firmar los nuevos ingresos?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Cuáles son las tareas críticas de los primeros 30 días?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Quién es responsable del seguimiento del onboarding?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Habrá capacitaciones obligatorias? ¿De qué tipo?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Necesitan planes diferenciados por cargo o área?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 11 · DOCUMENTOS PERSONALES
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s11" role="region" aria-label="Documentos Personales">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:36px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 6</div>
+        <div class="slide-title">Documentos <span>Personales</span></div>
+      </div>
+      <div class="mod-layout" style="flex:1;margin-top:18px;min-height:0;">
+        <div class="mod-col-left">
+          <!-- Folder illustration -->
+          <div style="flex:1;background:var(--blue-xlight);border:2px dashed var(--border);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+            <div style="width:140px;height:110px;position:relative;">
+              <div style="position:absolute;bottom:0;width:100%;height:80px;background:var(--white);border-radius:9px 9px 9px 9px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm);"></div>
+              <div style="position:absolute;bottom:66px;left:0;width:52%;height:22px;background:var(--white);border-radius:7px 7px 0 0;border:1.5px solid var(--border);border-bottom:none;"></div>
+              <div style="position:absolute;bottom:16px;left:14px;right:14px;display:flex;flex-direction:column;gap:6px;">
+                <div style="height:6px;background:var(--border);border-radius:3px;"></div>
+                <div style="height:6px;background:var(--border);border-radius:3px;width:75%;"></div>
+                <div style="height:6px;background:var(--blue);border-radius:3px;width:55%;opacity:.4;"></div>
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink-light);">Carpeta digital del colaborador</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;"><div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Contrato</div><div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Firmado digitalmente</div></div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;"><div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Nómina</div><div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Recibos de pago</div></div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;"><div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Certificados</div><div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Capacitaciones</div></div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;"><div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Políticas</div><div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Código de conducta</div></div>
+          </div>
+        </div>
+        <div class="mod-col-right">
+          <div class="mod-col-right-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué tipos de documentos compartirán con los colaboradores?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién administrará y cargará los documentos?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Cuáles son los documentos obligatorios para todos?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Cómo será el proceso de actualización de documentos?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Necesitan firma digital o solo visualización?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 12 · RESUMEN DE DEFINICIONES
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s12" role="region" aria-label="Resumen de definiciones">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Consolidado</div>
+        <div class="slide-title">Resumen de <span>definiciones</span></div>
+      </div>
+      <div class="s12-body">
+        <table class="def-table">
+          <thead>
+            <tr>
+              <th style="width:190px;">Módulo</th>
+              <th style="width:180px;">Estado México</th>
+              <th>Definición Colombia</th>
+              <th style="width:130px;">Prioridad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><div class="def-mod-name"><div class="def-dot"></div>Comunicación</div></td><td><span class="tag tag-green">Activo</span></td><td><div class="def-editable"><div class="def-line"></div><span class="cursor"></span></div></td><td><span class="tag">Por definir</span></td></tr>
+            <tr><td><div class="def-mod-name"><div class="def-dot"></div>Gestión de Servicios</div></td><td><span class="tag tag-green">Activo</span></td><td><div class="def-editable"><div class="def-line"></div></div></td><td><span class="tag">Por definir</span></td></tr>
+            <tr><td><div class="def-mod-name"><div class="def-dot"></div>Onboarding 2.0</div></td><td><span class="tag tag-orange">En progreso</span></td><td><div class="def-editable"><div class="def-line"></div></div></td><td><span class="tag">Por definir</span></td></tr>
+            <tr><td><div class="def-mod-name"><div class="def-dot"></div>Chatbot AI</div></td><td><span class="tag tag-green">Activo</span></td><td><div class="def-editable"><div class="def-line"></div></div></td><td><span class="tag">Por definir</span></td></tr>
+            <tr><td><div class="def-mod-name"><div class="def-dot"></div>Reconocimientos</div></td><td><span class="tag tag-green">Activo</span></td><td><div class="def-editable"><div class="def-line"></div></div></td><td><span class="tag">Por definir</span></td></tr>
+            <tr><td><div class="def-mod-name"><div class="def-dot"></div>Documentos Personales</div></td><td><span class="tag tag-orange">En progreso</span></td><td><div class="def-editable"><div class="def-line"></div></div></td><td><span class="tag">Por definir</span></td></tr>
+          </tbody>
+        </table>
+        <div class="note-bar">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <div class="note-bar-text">Esta tabla se completa en vivo durante la sesión de discovery.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 13 · PRÓXIMOS PASOS
+  ═══════════════════════════════════════════ -->
+  <div class="slide" id="s13" role="region" aria-label="Próximos pasos">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Plan</div>
+        <div class="slide-title">Próximos <span>pasos</span></div>
+        <div class="slide-sub">Roadmap de implementación OXXO Colombia</div>
+      </div>
+      <div class="s13-body">
+        <div class="roadmap">
+
+          <div class="rm-item done">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Discovery</div>
+              <div class="rm-card-sub">Workshop de definición funcional</div>
+              <div class="rm-status"><div class="rm-status-dot" style="background:#0E8A4A;"></div><div class="rm-status-text" style="color:#0E8A4A;">En curso</div></div>
+            </div>
+          </div>
+
+          <div class="rm-item current">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Definiciones</div>
+              <div class="rm-card-sub">Documentar configuraciones acordadas</div>
+              <div class="rm-status"><div class="rm-status-dot" style="background:var(--blue);"></div><div class="rm-status-text" style="color:var(--blue);">Siguiente</div></div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Configuración</div>
+              <div class="rm-card-sub">Setup de módulos y contenidos</div>
+              <div class="rm-status"><div class="rm-status-dot" style="background:var(--ink-xlight);"></div><div class="rm-status-text" style="color:var(--ink-xlight);">Pendiente</div></div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Validación</div>
+              <div class="rm-card-sub">UAT con equipo OXXO Colombia</div>
+              <div class="rm-status"><div class="rm-status-dot" style="background:var(--ink-xlight);"></div><div class="rm-status-text" style="color:var(--ink-xlight);">Pendiente</div></div>
+            </div>
+          </div>
+
+          <div class="rm-item">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Lanzamiento</div>
+              <div class="rm-card-sub">Go-live con soporte Humand</div>
+              <div class="rm-status"><div class="rm-status-dot" style="background:var(--ink-xlight);"></div><div class="rm-status-text" style="color:var(--ink-xlight);">Pendiente</div></div>
+            </div>
+          </div>
+
+        </div>
+        <div class="s13-cta">
+          <div>
+            <div class="s13-cta-text">¿Listos para comenzar la implementación?</div>
+            <div class="s13-cta-sub">Humand acompaña a OXXO Colombia en cada paso del proceso</div>
+          </div>
+          <button class="s13-cta-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            Comenzar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #deck -->
+
+<!-- Navigation bar -->
+<nav id="nav" aria-label="Navegación de slides">
+  <button class="nav-btn" id="prevBtn" aria-label="Anterior">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div id="navDots" role="tablist" aria-label="Slides"></div>
+  <div id="navCounter" aria-live="polite"></div>
+  <button class="nav-btn" id="nextBtn" aria-label="Siguiente">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</nav>
+
+<script src="js/deck.js"></script>
+</body>
+</html>

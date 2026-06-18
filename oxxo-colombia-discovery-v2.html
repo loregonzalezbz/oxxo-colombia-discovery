@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OXXO Colombia — Discovery de Implementación</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --humand-blue: #2F4CB5;
+    --humand-blue-dark: #1E3490;
+    --humand-blue-mid: #4A65CC;
+    --humand-blue-light: #EEF1FB;
+    --humand-blue-pale: #F4F6FC;
+    --white: #FFFFFF;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-600: #4B5563;
+    --gray-800: #1F2937;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(47,76,181,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 8px 32px rgba(47,76,181,0.12), 0 2px 8px rgba(0,0,0,0.06);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0f1117;
+    overflow: hidden;
+  }
+
+  .deck {
+    width: 100%; height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide {
+    position: absolute;
+    width: 1280px;
+    height: 720px;
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.45s cubic-bezier(0.4,0,0.2,1), transform 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+  }
+
+  .slide.prev {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.99);
+  }
+
+  /* Scale deck to fit viewport */
+  .deck-scaler {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    transform-origin: center center;
+  }
+
+  /* Nav */
+  .nav {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 40px;
+    padding: 8px 16px;
+    z-index: 1000;
+  }
+
+  .nav-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: background 0.2s;
+  }
+
+  .nav-btn:hover { background: rgba(255,255,255,0.35); }
+
+  .nav-counter {
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 56px;
+    text-align: center;
+    opacity: 0.9;
+  }
+
+  .nav-dots {
+    display: flex; gap: 5px;
+  }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-dot.active {
+    background: white;
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  /* Shared layout helpers */
+  .slide-inner {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 56px 72px 48px;
+    position: relative;
+  }
+
+  .slide-inner.padded-tight {
+    padding: 44px 64px 40px;
+  }
+
+  /* Logo badge */
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--humand-blue-pale);
+    border: 1px solid #DDE3F5;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--humand-blue);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--humand-blue);
+    border-radius: 50%;
+  }
+
+  /* Label chip */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--humand-blue-pale);
+    color: var(--humand-blue);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #DDE3F5;
+  }
+
+  .chip.orange {
+    background: #FFF4ED;
+    color: #C2510C;
+    border-color: #FAD5BB;
+  }
+
+  /* Section label */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--humand-blue);
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card.blue {
+    background: var(--humand-blue-pale);
+    border-color: #DDE3F5;
+  }
+
+  .card.elevated {
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Image placeholder */
+  .img-placeholder {
+    background: var(--humand-blue-pale);
+    border: 1.5px dashed #C3CCEB;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--humand-blue);
+    opacity: 0.7;
+  }
+
+  .img-placeholder .icon {
+    width: 36px; height: 36px;
+    opacity: 0.5;
+  }
+
+  .img-placeholder span {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  /* Blue accent line */
+  .accent-line {
+    width: 40px; height: 3px;
+    background: var(--humand-blue);
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  /* Decorative circle bg */
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--humand-blue-pale);
+    pointer-events: none;
+  }
+
+  /* Top bar accent */
+  .top-accent {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--humand-blue) 0%, var(--humand-blue-mid) 100%);
+    position: absolute;
+    top: 0; left: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 1 — Cover
+  ───────────────────────────────────────────── */
+  #s1 { background: #F8F9FF; }
+
+  #s1 .inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100%;
+  }
+
+  #s1 .left {
+    padding: 72px 56px 64px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+  }
+
+  #s1 .right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  #s1 .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--humand-blue);
+    opacity: 0.7;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  #s1 h1 {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+  }
+
+  #s1 h1 span { color: var(--humand-blue); }
+
+  #s1 h2 {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--gray-600);
+    margin-bottom: 32px;
+  }
+
+  #s1 .subtitle-box {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-left: 3px solid var(--humand-blue);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--gray-600);
+    line-height: 1.6;
+    max-width: 400px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  #s1 .meta-pills {
+    display: flex;
+    gap: 8px;
+    margin-top: 40px;
+  }
+
+  #s1 .meta-pill {
+    background: var(--humand-blue-pale);
+    border: 1px solid #DDE3F5;
+    color: var(--humand-blue);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 2 — Objetivo
+  ───────────────────────────────────────────── */
+  #s2 .big-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  #s2 .objective-card {
+    max-width: 760px;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: 48px 52px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    position: relative;
+  }
+
+  #s2 .objective-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 60px; height: 3px;
+    background: var(--humand-blue);
+    border-radius: 0 0 3px 3px;
+  }
+
+  #s2 .objective-card .icon-wrap {
+    width: 64px; height: 64px;
+    background: var(--humand-blue-pale);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 28px;
+    font-size: 28px;
+    color: var(--humand-blue);
+  }
+
+  #s2 .objective-card p {
+    font-size: 19px;
+    line-height: 1.7;
+    color: var(--gray-600);
+    font-weight: 400;
+  }
+
+  #s2 .objective-card p strong {
+    color: var(--gray-800);
+    font-weight: 600;
+  }
+
+  #s2 .stats-row {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: 760px;
+  }
+
+  #s2 .stat-card {
+    flex: 1;
+    background: var(--humand-blue-pale);
+    border: 1px solid #DDE3F5;
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    text-align: center;
+  }
+
+  #s2 .stat-card .num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--humand-blue);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  #s2 .stat-card .label {
+    font-size: 12px;
+    color: var(--humand-blue);
+    opacity: 0.7;
+    font-weight: 500;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 3 — Agenda timeline
+  ───────────────────────────────────────────── */
+  #s3 .timeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex: 1;
+    margin-top: 40px;
+  }
+
+  #s3 .tl-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  #s3 .tl-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    right: -50%;
+    height: 2px;
+    background: var(--gray-200);
+    z-index: 0;
+  }
+
+  #s3 .tl-dot {
+    width: 56px; height: 56px;
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-400);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+
+  #s3 .tl-item.active .tl-dot {
+    background: var(--humand-blue);
+    border-color: var(--humand-blue);
+    color: white;
+    box-shadow: 0 0 0 6px rgba(47,76,181,0.12);
+  }
+
+  #s3 .tl-body {
+    margin-top: 20px;
+    text-align: center;
+    padding: 0 8px;
+  }
+
+  #s3 .tl-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 6px;
+  }
+
+  #s3 .tl-desc {
+    font-size: 12px;
+    color: var(--gray-400);
+    line-height: 1.5;
+  }
+
+  #s3 .tl-card {
+    margin-top: 20px;
+    background: var(--humand-blue-pale);
+    border: 1px solid #DDE3F5;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    width: 100%;
+    text-align: left;
+  }
+
+  #s3 .tl-card-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--humand-blue);
+    opacity: 0.6;
+    margin-bottom: 4px;
+  }
+
+  #s3 .tl-card-text {
+    font-size: 12px;
+    color: var(--humand-blue);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 4 — Módulos
+  ───────────────────────────────────────────── */
+  #s4 .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 16px;
+    flex: 1;
+    margin-top: 36px;
+  }
+
+  .module-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+    cursor: default;
+  }
+
+  .module-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: #C3CCEB;
+  }
+
+  .module-icon {
+    width: 44px; height: 44px;
+    background: var(--humand-blue-pale);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    color: var(--humand-blue);
+    flex-shrink: 0;
+  }
+
+  .module-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+
+  .module-desc {
+    font-size: 12px;
+    color: var(--gray-400);
+    line-height: 1.5;
+  }
+
+  .module-tag {
+    margin-top: auto;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--humand-blue);
+    opacity: 0.6;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 5 — Mexico screenshots
+  ───────────────────────────────────────────── */
+  #s5 .grid-6 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 14px;
+    flex: 1;
+    margin-top: 24px;
+  }
+
+  #s5 .ph-item {
+    background: var(--humand-blue-pale);
+    border: 1.5px dashed #C3CCEB;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--humand-blue);
+    position: relative;
+  }
+
+  #s5 .ph-item .ph-label {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--white);
+    border: 1px solid #DDE3F5;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--humand-blue);
+    white-space: nowrap;
+  }
+
+  #s5 .ph-icon {
+    font-size: 28px;
+    opacity: 0.4;
+  }
+
+  #s5 .bottom-note {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #FFF4ED;
+    border: 1px solid #FAD5BB;
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    font-size: 12px;
+    color: #C2510C;
+    font-weight: 500;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 6–11 — Module discovery (2-col)
+  ───────────────────────────────────────────── */
+  .module-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    flex: 1;
+    margin-top: 28px;
+    align-items: start;
+  }
+
+  .module-layout.full-width {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .col-left, .col-right { display: flex; flex-direction: column; gap: 14px; }
+
+  .screenshot-ph {
+    background: var(--humand-blue-pale);
+    border: 1.5px dashed #C3CCEB;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--humand-blue);
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.75;
+  }
+
+  .screenshot-ph svg { opacity: 0.45; }
+
+  .questions-box {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .questions-box .qb-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-800);
+    letter-spacing: 0.01em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .qb-title .dot {
+    width: 6px; height: 6px;
+    background: var(--humand-blue);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .q-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--humand-blue-pale);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--gray-800);
+    line-height: 1.45;
+    border: 1px solid #E4E9F6;
+  }
+
+  .q-item:last-child { margin-bottom: 0; }
+
+  .q-num {
+    min-width: 20px; height: 20px;
+    background: var(--humand-blue);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 9 — Service Management
+  ───────────────────────────────────────────── */
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .cat-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .cat-card:hover {
+    border-color: #C3CCEB;
+    background: var(--humand-blue-pale);
+  }
+
+  .cat-icon {
+    width: 36px; height: 36px;
+    background: var(--humand-blue-pale);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    color: var(--humand-blue);
+  }
+
+  .cat-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 10 — Onboarding flow
+  ───────────────────────────────────────────── */
+  .flow-horizontal {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+  }
+
+  .flow-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .flow-dot {
+    width: 44px; height: 44px;
+    background: var(--humand-blue);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: white;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .flow-connector {
+    flex: 0 0 24px;
+    height: 2px;
+    background: var(--gray-200);
+    margin-bottom: 26px;
+  }
+
+  .flow-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-800);
+    text-align: center;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 11 — Documentos
+  ───────────────────────────────────────────── */
+  .folder-viz {
+    background: var(--humand-blue-pale);
+    border: 1px solid #DDE3F5;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    flex: 1;
+  }
+
+  .folder-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .folder-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--humand-blue-dark);
+  }
+
+  .doc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .doc-row {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--gray-800);
+  }
+
+  .doc-icon {
+    font-size: 16px;
+    color: var(--humand-blue);
+    opacity: 0.7;
+  }
+
+  .doc-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .doc-badge.req {
+    background: #ECFDF5;
+    color: #059669;
+    border: 1px solid #A7F3D0;
+  }
+
+  .doc-badge.opt {
+    background: var(--humand-blue-pale);
+    color: var(--humand-blue);
+    border: 1px solid #DDE3F5;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 12 — Resumen tabla
+  ───────────────────────────────────────────── */
+  .summary-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 28px;
+    font-size: 13px;
+  }
+
+  .summary-table thead tr th {
+    background: var(--humand-blue);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    text-align: left;
+  }
+
+  .summary-table thead tr th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+  .summary-table thead tr th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+
+  .summary-table tbody tr {
+    transition: background 0.15s;
+  }
+
+  .summary-table tbody tr:hover td { background: var(--humand-blue-pale); }
+
+  .summary-table tbody tr td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-800);
+    background: var(--white);
+  }
+
+  .summary-table tbody tr:last-child td { border-bottom: none; }
+
+  .summary-table tbody tr:last-child td:first-child { border-radius: 0 0 0 var(--radius-sm); }
+  .summary-table tbody tr:last-child td:last-child { border-radius: 0 0 var(--radius-sm) 0; }
+
+  .table-wrap {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .priority-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .priority-badge.high {
+    background: #ECFDF5;
+    color: #059669;
+    border: 1px solid #A7F3D0;
+  }
+
+  .priority-badge.med {
+    background: #FFF4ED;
+    color: #C2510C;
+    border: 1px solid #FAD5BB;
+  }
+
+  .cell-placeholder {
+    width: 120px; height: 16px;
+    background: var(--gray-100);
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px dashed var(--gray-200);
+    vertical-align: middle;
+  }
+
+  /* ─────────────────────────────────────────────
+     SLIDE 13 — Roadmap
+  ───────────────────────────────────────────── */
+  #s13 .roadmap-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex: 1;
+    margin-top: 40px;
+  }
+
+  .rm-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .rm-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    right: -50%;
+    height: 2px;
+    z-index: 0;
+  }
+
+  .rm-step:nth-child(1)::after { background: linear-gradient(90deg, var(--humand-blue), #5B78D1); }
+  .rm-step:nth-child(2)::after { background: linear-gradient(90deg, #5B78D1, #7A93DE); }
+  .rm-step:nth-child(3)::after { background: linear-gradient(90deg, #7A93DE, #9AAEE8); }
+  .rm-step:nth-child(4)::after { background: linear-gradient(90deg, #9AAEE8, #BAC8F0); }
+
+  .rm-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .rm-number {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  .rm-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-800);
+    text-align: center;
+  }
+
+  .rm-period {
+    font-size: 11px;
+    color: var(--gray-400);
+    font-weight: 500;
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .rm-card {
+    margin: 0 12px;
+    border-radius: var(--radius-md);
+    padding: 16px 14px;
+    flex: 1;
+  }
+
+  .rm-task {
+    font-size: 11px;
+    color: var(--gray-600);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rm-task:last-child { border-bottom: none; }
+
+  .rm-task::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--humand-blue);
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* Slide header area */
+  .slide-header {
+    margin-bottom: 8px;
+  }
+
+  .slide-header h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1.15;
+  }
+
+  .slide-header p {
+    font-size: 15px;
+    color: var(--gray-400);
+    margin-top: 6px;
+  }
+
+  /* Page number */
+  .page-num {
+    position: absolute;
+    bottom: 28px;
+    right: 72px;
+    font-size: 11px;
+    color: var(--gray-400);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .page-num .humand-brand {
+    font-weight: 700;
+    color: var(--humand-blue);
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="deck-scaler" id="deckScaler">
+
+    <!-- ═══════════════════════════════════
+         SLIDE 1 — COVER
+    ═══════════════════════════════════ -->
+    <div class="slide active" id="s1">
+      <div class="top-accent"></div>
+
+      <!-- Decorative circles -->
+      <div class="deco-circle" style="width:480px;height:480px;top:-160px;right:-80px;opacity:0.4;"></div>
+      <div class="deco-circle" style="width:240px;height:240px;bottom:-60px;right:280px;opacity:0.3;"></div>
+
+      <div class="inner">
+        <div class="left">
+          <div class="logo-badge" style="margin-bottom:28px;">
+            <div class="logo-dot"></div>
+            Humand Platform
+          </div>
+
+          <p class="eyebrow">Discovery Workshop · 2026</p>
+
+          <h1>
+            OXXO<br>
+            <span>Colombia</span>
+          </h1>
+
+          <h2 style="margin-top:8px;">Discovery de Implementación</h2>
+
+          <div class="subtitle-box">
+            "Definición funcional basada en la experiencia de OXXO México"
+          </div>
+
+          <div class="meta-pills">
+            <div class="meta-pill">📍 Colombia</div>
+            <div class="meta-pill">6 Módulos</div>
+            <div class="meta-pill">Junio 2026</div>
+          </div>
+        </div>
+
+        <div class="right">
+          <!-- Illustration: Collaboration visual -->
+          <svg width="440" height="440" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Central hub -->
+            <circle cx="220" cy="220" r="72" fill="#EEF1FB" stroke="#C3CCEB" stroke-width="1.5"/>
+            <circle cx="220" cy="220" r="52" fill="#2F4CB5" opacity="0.08"/>
+            <circle cx="220" cy="220" r="36" fill="#2F4CB5" opacity="0.15"/>
+            <!-- Hub icon -->
+            <rect x="204" y="204" width="32" height="32" rx="8" fill="#2F4CB5" opacity="0.9"/>
+            <rect x="209" y="209" width="10" height="10" rx="2" fill="white"/>
+            <rect x="221" y="209" width="10" height="10" rx="2" fill="white"/>
+            <rect x="209" y="221" width="10" height="10" rx="2" fill="white" opacity="0.6"/>
+            <rect x="221" y="221" width="10" height="10" rx="2" fill="white" opacity="0.6"/>
+
+            <!-- Connector lines -->
+            <line x1="220" y1="148" x2="220" y2="80" stroke="#C3CCEB" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="292" y1="220" x2="360" y2="220" stroke="#C3CCEB" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="148" y1="220" x2="80" y2="220" stroke="#C3CCEB" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="270" y1="270" x2="330" y2="330" stroke="#C3CCEB" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="170" y1="270" x2="110" y2="330" stroke="#C3CCEB" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="270" y1="170" x2="330" y2="110" stroke="#C3CCEB" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+            <!-- Satellite nodes -->
+            <!-- Top -->
+            <circle cx="220" cy="64" r="28" fill="white" stroke="#DDE3F5" stroke-width="1.5"/>
+            <text x="220" y="70" text-anchor="middle" font-family="Inter" font-size="18" fill="#2F4CB5">📢</text>
+
+            <!-- Right -->
+            <circle cx="376" cy="220" r="28" fill="white" stroke="#DDE3F5" stroke-width="1.5"/>
+            <text x="376" y="226" text-anchor="middle" font-family="Inter" font-size="18" fill="#2F4CB5">🤖</text>
+
+            <!-- Left -->
+            <circle cx="64" cy="220" r="28" fill="white" stroke="#DDE3F5" stroke-width="1.5"/>
+            <text x="64" y="226" text-anchor="middle" font-family="Inter" font-size="18" fill="#2F4CB5">🎖️</text>
+
+            <!-- Bottom right -->
+            <circle cx="344" cy="344" r="24" fill="white" stroke="#DDE3F5" stroke-width="1.5"/>
+            <text x="344" y="350" text-anchor="middle" font-family="Inter" font-size="16" fill="#2F4CB5">🎓</text>
+
+            <!-- Bottom left -->
+            <circle cx="96" cy="344" r="24" fill="white" stroke="#DDE3F5" stroke-width="1.5"/>
+            <text x="96" y="350" text-anchor="middle" font-family="Inter" font-size="16" fill="#2F4CB5">📁</text>
+
+            <!-- Top right -->
+            <circle cx="344" cy="96" r="24" fill="white" stroke="#DDE3F5" stroke-width="1.5"/>
+            <text x="344" y="102" text-anchor="middle" font-family="Inter" font-size="16" fill="#2F4CB5">🎫</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="page-num">
+        <span class="humand-brand">Humand</span>
+        <span>01 / 13</span>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 2 — OBJETIVO
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s2">
+      <div class="top-accent"></div>
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Objetivo</div>
+          <h2>¿Para qué estamos aquí?</h2>
+        </div>
+
+        <div class="big-card">
+          <div class="objective-card">
+            <div class="icon-wrap">🎯</div>
+            <p>
+              Revisaremos cómo está configurado actualmente <strong>OXXO México</strong> para definir, junto al equipo de Colombia, qué procesos desean <strong>implementar, priorizar y adaptar</strong> a su operación.
+            </p>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="num">6</div>
+              <div class="label">Módulos contratados</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">1</div>
+              <div class="label">Referencia México</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">1 día</div>
+              <div class="label">Workshop discovery</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">100%</div>
+              <div class="label">Decisiones en manos del equipo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>02 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 3 — AGENDA
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s3">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Agenda</div>
+          <h2>Estructura del Workshop</h2>
+          <p>5 bloques para definir la implementación</p>
+        </div>
+
+        <div class="timeline">
+          <div class="tl-item active">
+            <div class="tl-dot">01</div>
+            <div class="tl-body">
+              <div class="tl-title">Objetivo</div>
+              <div class="tl-desc">Contexto y<br>propósito del day</div>
+              <div class="tl-card">
+                <div class="tl-card-label">Duración</div>
+                <div class="tl-card-text">15 min</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">02</div>
+            <div class="tl-body">
+              <div class="tl-title">Estado actual México</div>
+              <div class="tl-desc">Revisión de la<br>configuración base</div>
+              <div class="tl-card">
+                <div class="tl-card-label">Duración</div>
+                <div class="tl-card-text">30 min</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">03</div>
+            <div class="tl-body">
+              <div class="tl-title">Discovery por módulo</div>
+              <div class="tl-desc">Análisis de cada<br>módulo contratado</div>
+              <div class="tl-card">
+                <div class="tl-card-label">Duración</div>
+                <div class="tl-card-text">2–3 horas</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">04</div>
+            <div class="tl-body">
+              <div class="tl-title">Priorización</div>
+              <div class="tl-desc">Definición de<br>alcance y fases</div>
+              <div class="tl-card">
+                <div class="tl-card-label">Duración</div>
+                <div class="tl-card-text">45 min</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">05</div>
+            <div class="tl-body">
+              <div class="tl-title">Próximos pasos</div>
+              <div class="tl-desc">Plan de acción<br>y responsables</div>
+              <div class="tl-card">
+                <div class="tl-card-label">Duración</div>
+                <div class="tl-card-text">30 min</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>03 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 4 — MÓDULOS CONTRATADOS
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s4">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Alcance</div>
+          <h2>Módulos contratados</h2>
+          <p>6 módulos definidos para la implementación de Colombia</p>
+        </div>
+
+        <div class="modules-grid">
+          <div class="module-card">
+            <div class="module-icon">📢</div>
+            <div>
+              <div class="module-name">Comunicación</div>
+              <div class="module-desc">Noticias, campañas y<br>segmentación de mensajes</div>
+            </div>
+            <div class="module-tag">Module 01</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">🎫</div>
+            <div>
+              <div class="module-name">Gestión de Servicios</div>
+              <div class="module-desc">Tickets, catálogo y<br>SLA por área</div>
+            </div>
+            <div class="module-tag">Module 02</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">🎓</div>
+            <div>
+              <div class="module-name">Onboarding 2.0</div>
+              <div class="module-desc">Flujo de ingreso,<br>tareas y capacitaciones</div>
+            </div>
+            <div class="module-tag">Module 03</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">🤖</div>
+            <div>
+              <div class="module-name">Chatbot AI</div>
+              <div class="module-desc">Asistente inteligente<br>y automatización</div>
+            </div>
+            <div class="module-tag">Module 04</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">🎖️</div>
+            <div>
+              <div class="module-name">Reconocimientos</div>
+              <div class="module-desc">Cultura de reconocimiento<br>entre colaboradores</div>
+            </div>
+            <div class="module-tag">Module 05</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">📁</div>
+            <div>
+              <div class="module-name">Documentos Personales</div>
+              <div class="module-desc">Legajos digitales<br>y documentos obligatorios</div>
+            </div>
+            <div class="module-tag">Module 06</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>04 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 5 — ESTADO ACTUAL MÉXICO
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s5">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip orange" style="margin-bottom:12px;">Referencia</div>
+          <h2>¿Cómo funciona OXXO México?</h2>
+          <p>Capturas de pantalla de la implementación actual como punto de partida</p>
+        </div>
+
+        <div class="grid-6">
+          <div class="ph-item">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="4" y="6" width="24" height="20" rx="3" stroke="#2F4CB5" stroke-width="1.5"/><line x1="8" y1="11" x2="24" y2="11" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="15" x2="20" y2="15" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="19" x2="16" y2="19" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <div class="ph-label">📢 Comunicación</div>
+          </div>
+          <div class="ph-item">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="14" r="7" stroke="#2F4CB5" stroke-width="1.5"/><path d="M12 22c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/><path d="M22 10l2-2M22 18l2 2" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <div class="ph-label">🎖️ Reconocimientos</div>
+          </div>
+          <div class="ph-item">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="5" y="5" width="22" height="22" rx="3" stroke="#2F4CB5" stroke-width="1.5"/><line x1="5" y1="12" x2="27" y2="12" stroke="#2F4CB5" stroke-width="1.5"/><line x1="12" y1="5" x2="12" y2="27" stroke="#2F4CB5" stroke-width="1.5"/></svg>
+            <div class="ph-label">🎫 Service Management</div>
+          </div>
+          <div class="ph-item">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 6L28 12V20C28 24 22 28 16 28C10 28 4 24 4 20V12L16 6Z" stroke="#2F4CB5" stroke-width="1.5"/><path d="M11 16L15 20L21 13" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="ph-label">🎓 Onboarding</div>
+          </div>
+          <div class="ph-item">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M8 6H20L26 12V26H8V6Z" stroke="#2F4CB5" stroke-width="1.5" stroke-linejoin="round"/><path d="M20 6V12H26" stroke="#2F4CB5" stroke-width="1.5"/><line x1="12" y1="17" x2="22" y2="17" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="21" x2="18" y2="21" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <div class="ph-label">📁 Documentos</div>
+          </div>
+          <div class="ph-item">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="10" stroke="#2F4CB5" stroke-width="1.5"/><circle cx="16" cy="16" r="4" fill="#2F4CB5" opacity="0.3"/><path d="M16 6V9M16 23V26M6 16H9M23 16H26" stroke="#2F4CB5" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <div class="ph-label">🤖 Chatbot AI</div>
+          </div>
+        </div>
+
+        <div class="bottom-note">
+          <span>💡</span>
+          <span>Tomaremos la implementación actual de México como punto de partida para el discovery.</span>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>05 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 6 — COMUNICACIÓN
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s6">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Módulo 01</div>
+          <h2>📢 Comunicación</h2>
+        </div>
+
+        <div class="module-layout">
+          <div class="col-left">
+            <div class="screenshot-ph" style="height:340px;">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="9" width="36" height="30" rx="4" stroke="#2F4CB5" stroke-width="2"/><line x1="12" y1="16" x2="36" y2="16" stroke="#2F4CB5" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="22" x2="30" y2="22" stroke="#2F4CB5" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="28" x2="24" y2="28" stroke="#2F4CB5" stroke-width="2" stroke-linecap="round"/><circle cx="38" cy="11" r="6" fill="#2F4CB5"/><line x1="38" y1="8" x2="38" y2="14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="35" y1="11" x2="41" y2="11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span>Screenshot OXXO México</span>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <div class="questions-box">
+              <div class="qb-title"><div class="dot"></div>Preguntas Discovery</div>
+              <div class="q-item"><div class="q-num">1</div>¿Qué tipo de comunicación desean publicar?</div>
+              <div class="q-item"><div class="q-num">2</div>¿Quién administrará las noticias?</div>
+              <div class="q-item"><div class="q-num">3</div>¿Cómo segmentarán la comunicación?</div>
+              <div class="q-item"><div class="q-num">4</div>¿Qué grupos de colaboradores necesitan?</div>
+              <div class="q-item"><div class="q-num">5</div>¿Qué contenidos son prioritarios para el lanzamiento?</div>
+            </div>
+
+            <div style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;border-radius:var(--radius-md);padding:14px 16px;">
+              <div style="font-size:11px;font-weight:700;color:var(--humand-blue);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Funcionalidades clave</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Noticias</span>
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Segmentación</span>
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Push notifications</span>
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Analytics</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>06 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 7 — RECONOCIMIENTOS
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s7">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Módulo 05</div>
+          <h2>🎖️ Reconocimientos</h2>
+        </div>
+
+        <div class="module-layout">
+          <div class="col-left">
+            <div class="screenshot-ph" style="height:340px;">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="18" r="9" stroke="#2F4CB5" stroke-width="2"/><path d="M18 28c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="#2F4CB5" stroke-width="2" stroke-linecap="round"/><path d="M36 14l3-3M36 26l3 3M12 14l-3-3M12 26l-3 3" stroke="#2F4CB5" stroke-width="2" stroke-linecap="round"/><path d="M24 7V4M24 32V35" stroke="#2F4CB5" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>Screenshot OXXO México</span>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <div class="questions-box">
+              <div class="qb-title"><div class="dot"></div>Preguntas Discovery</div>
+              <div class="q-item"><div class="q-num">1</div>¿Qué comportamientos o logros quieren reconocer?</div>
+              <div class="q-item"><div class="q-num">2</div>¿Quién puede dar reconocimientos?</div>
+              <div class="q-item"><div class="q-num">3</div>¿Será entre colaboradores o solo líderes a equipos?</div>
+              <div class="q-item"><div class="q-num">4</div>¿Habrá campañas especiales o fechas clave?</div>
+            </div>
+
+            <div style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;border-radius:var(--radius-md);padding:14px 16px;">
+              <div style="font-size:11px;font-weight:700;color:var(--humand-blue);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Tipos de reconocimiento</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Peer to peer</span>
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Líder a equipo</span>
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Campaña</span>
+                <span style="background:white;border:1px solid #DDE3F5;border-radius:12px;padding:3px 10px;font-size:11px;color:var(--humand-blue);font-weight:500;">Aniversario</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>07 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 8 — CHATBOT AI
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s8">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Módulo 04</div>
+          <h2>🤖 Chatbot AI</h2>
+        </div>
+
+        <div class="module-layout">
+          <div class="col-left">
+            <div class="screenshot-ph" style="height:220px;">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="8" y="6" width="32" height="24" rx="4" stroke="#2F4CB5" stroke-width="2"/><path d="M16 36l-6 6V36H8" stroke="#2F4CB5" stroke-width="2" stroke-linejoin="round"/><circle cx="18" cy="18" r="2" fill="#2F4CB5"/><circle cx="24" cy="18" r="2" fill="#2F4CB5"/><circle cx="30" cy="18" r="2" fill="#2F4CB5"/></svg>
+              <span>Chat UI — OXXO México</span>
+            </div>
+
+            <div style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;border-radius:var(--radius-md);padding:16px;">
+              <div style="font-size:11px;font-weight:700;color:var(--humand-blue);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Ejemplo de flujos</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="background:var(--white);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--gray-800);border:1px solid var(--gray-200);">¿Cuántos días de vacaciones me quedan?</div>
+                <div style="background:var(--white);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--gray-800);border:1px solid var(--gray-200);">Necesito solicitar un permiso</div>
+                <div style="background:var(--white);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--gray-800);border:1px solid var(--gray-200);">¿Cómo tramito mi certificado laboral?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <div class="questions-box">
+              <div class="qb-title"><div class="dot"></div>Preguntas Discovery</div>
+              <div class="q-item"><div class="q-num">1</div>¿Qué preguntas reciben frecuentemente los equipos de RRHH y TI?</div>
+              <div class="q-item"><div class="q-num">2</div>¿Qué información debería conocer el chatbot desde el inicio?</div>
+              <div class="q-item"><div class="q-num">3</div>¿Qué procesos desean automatizar en la primera fase?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>08 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 9 — GESTIÓN DE SERVICIOS
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s9">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Módulo 02 · Prioritario</div>
+          <h2>🎫 Gestión de Servicios</h2>
+        </div>
+
+        <div class="module-layout full-width" style="align-items:stretch;">
+          <div class="col-left" style="gap:12px;">
+            <div style="font-size:12px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em;">Catálogo de servicios — OXXO México</div>
+            <div class="catalog-grid">
+              <div class="cat-card">
+                <div class="cat-icon">👥</div>
+                <div class="cat-name">RRHH</div>
+              </div>
+              <div class="cat-card">
+                <div class="cat-icon">💻</div>
+                <div class="cat-name">Tecnología</div>
+              </div>
+              <div class="cat-card">
+                <div class="cat-icon">💰</div>
+                <div class="cat-name">Nómina</div>
+              </div>
+              <div class="cat-card">
+                <div class="cat-icon">🏗️</div>
+                <div class="cat-name">Infraestructura</div>
+              </div>
+              <div class="cat-card">
+                <div class="cat-icon">⚙️</div>
+                <div class="cat-name">Operaciones</div>
+              </div>
+              <div class="cat-card">
+                <div class="cat-icon">🎁</div>
+                <div class="cat-name">Beneficios</div>
+              </div>
+            </div>
+
+            <div class="screenshot-ph" style="height:130px;margin-top:4px;">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="5" y="5" width="22" height="22" rx="3" stroke="#2F4CB5" stroke-width="1.5"/><line x1="5" y1="12" x2="27" y2="12" stroke="#2F4CB5" stroke-width="1.5"/><line x1="12" y1="5" x2="12" y2="27" stroke="#2F4CB5" stroke-width="1.5"/></svg>
+              <span>Vista de tickets — OXXO México</span>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <div class="questions-box" style="height:100%;">
+              <div class="qb-title"><div class="dot"></div>Preguntas Discovery</div>
+              <div class="q-item"><div class="q-num">1</div>¿Qué servicios incluirá el catálogo de Colombia?</div>
+              <div class="q-item"><div class="q-num">2</div>¿Quién atenderá cada categoría de servicios?</div>
+              <div class="q-item"><div class="q-num">3</div>¿Habrá SLA definidos por tipo de ticket?</div>
+              <div class="q-item"><div class="q-num">4</div>¿Se requieren flujos de aprobación?</div>
+              <div class="q-item"><div class="q-num">5</div>¿Cómo desean clasificar y priorizar los tickets?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>09 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 10 — ONBOARDING 2.0
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s10">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Módulo 03</div>
+          <h2>🎓 Onboarding 2.0</h2>
+        </div>
+
+        <div class="module-layout">
+          <div class="col-left" style="gap:16px;">
+            <div style="font-size:12px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em;">Flujo de ingreso</div>
+
+            <div style="display:flex;align-items:center;flex-wrap:nowrap;gap:0;">
+              <div class="flow-step">
+                <div class="flow-dot" style="width:40px;height:40px;font-size:14px;font-weight:700;">1</div>
+                <div class="flow-label" style="font-size:11px;margin-top:6px;">Ingreso</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step">
+                <div class="flow-dot" style="width:40px;height:40px;font-size:14px;font-weight:700;background:#4A65CC;">2</div>
+                <div class="flow-label" style="font-size:11px;margin-top:6px;">Documentos</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step">
+                <div class="flow-dot" style="width:40px;height:40px;font-size:14px;font-weight:700;background:#6378D8;">3</div>
+                <div class="flow-label" style="font-size:11px;margin-top:6px;">Tareas</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step">
+                <div class="flow-dot" style="width:40px;height:40px;font-size:14px;font-weight:700;background:#7A8FDE;">4</div>
+                <div class="flow-label" style="font-size:11px;margin-top:6px;">Capacitaciones</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step">
+                <div class="flow-dot" style="width:40px;height:40px;font-size:14px;font-weight:700;background:#92A3E5;">5</div>
+                <div class="flow-label" style="font-size:11px;margin-top:6px;">Primer día</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step">
+                <div class="flow-dot" style="width:40px;height:40px;font-size:14px;font-weight:700;background:#AAB8EC;">6</div>
+                <div class="flow-label" style="font-size:11px;margin-top:6px;">Seguimiento</div>
+              </div>
+            </div>
+
+            <div class="screenshot-ph" style="height:240px;flex:1;">
+              <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><path d="M16 6H32L42 16V42H6V6H16Z" stroke="#2F4CB5" stroke-width="2" stroke-linejoin="round"/><path d="M32 6V16H42" stroke="#2F4CB5" stroke-width="2"/><path d="M15 24H33M15 30H27" stroke="#2F4CB5" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>Flujo onboarding — OXXO México</span>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <div class="questions-box">
+              <div class="qb-title"><div class="dot"></div>Preguntas Discovery</div>
+              <div class="q-item"><div class="q-num">1</div>¿Cuántos días dura el proceso de onboarding?</div>
+              <div class="q-item"><div class="q-num">2</div>¿Qué tareas son obligatorias antes del primer día?</div>
+              <div class="q-item"><div class="q-num">3</div>¿Quién es responsable de cada etapa del onboarding?</div>
+              <div class="q-item"><div class="q-num">4</div>¿Habrá onboardings diferenciados por rol o área?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>10 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 11 — DOCUMENTOS PERSONALES
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s11">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Módulo 06</div>
+          <h2>📁 Documentos Personales</h2>
+        </div>
+
+        <div class="module-layout">
+          <div class="col-left">
+            <div class="folder-viz" style="flex:1;">
+              <div class="folder-header">
+                <span style="font-size:20px;">📁</span>
+                <div>
+                  <div class="folder-title">Legajo Digital — Colaborador</div>
+                  <div style="font-size:11px;color:var(--humand-blue);opacity:0.6;">Documentos cargados y pendientes</div>
+                </div>
+              </div>
+              <div class="doc-list">
+                <div class="doc-row">
+                  <span class="doc-icon">📄</span>
+                  <span>Contrato de trabajo</span>
+                  <span class="doc-badge req">Obligatorio</span>
+                </div>
+                <div class="doc-row">
+                  <span class="doc-icon">📄</span>
+                  <span>Cédula de ciudadanía</span>
+                  <span class="doc-badge req">Obligatorio</span>
+                </div>
+                <div class="doc-row">
+                  <span class="doc-icon">📄</span>
+                  <span>Certificado de estudios</span>
+                  <span class="doc-badge opt">Opcional</span>
+                </div>
+                <div class="doc-row">
+                  <span class="doc-icon">📄</span>
+                  <span>Carné de salud</span>
+                  <span class="doc-badge req">Obligatorio</span>
+                </div>
+                <div class="doc-row">
+                  <span class="doc-icon">📄</span>
+                  <span>Referencias laborales</span>
+                  <span class="doc-badge opt">Opcional</span>
+                </div>
+                <div class="doc-row">
+                  <span class="doc-icon">📄</span>
+                  <span>Certificado bancario</span>
+                  <span class="doc-badge req">Obligatorio</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <div class="questions-box">
+              <div class="qb-title"><div class="dot"></div>Preguntas Discovery</div>
+              <div class="q-item"><div class="q-num">1</div>¿Qué documentos compartirá la empresa con los colaboradores?</div>
+              <div class="q-item"><div class="q-num">2</div>¿Quién administrará y actualizará los documentos?</div>
+              <div class="q-item"><div class="q-num">3</div>¿Cuáles son obligatorios versus opcionales?</div>
+              <div class="q-item"><div class="q-num">4</div>¿Cómo será el proceso de actualización y vencimiento?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>11 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 12 — RESUMEN
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s12">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Outputs</div>
+          <h2>Resumen de definiciones</h2>
+          <p>Tabla editable durante el workshop · Completar en sesión</p>
+        </div>
+
+        <div class="table-wrap" style="margin-top:20px;">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th style="width:22%;">Módulo</th>
+                <th style="width:28%;">Estado México</th>
+                <th style="width:34%;">Definición Colombia</th>
+                <th style="width:16%;">Prioridad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>📢 Comunicación</strong></td>
+                <td style="color:var(--gray-400);">Activo · 3 grupos</td>
+                <td><span class="cell-placeholder"></span></td>
+                <td><span class="priority-badge high">Alta</span></td>
+              </tr>
+              <tr>
+                <td><strong>🎫 Gestión de Servicios</strong></td>
+                <td style="color:var(--gray-400);">Activo · 6 categorías</td>
+                <td><span class="cell-placeholder"></span></td>
+                <td><span class="priority-badge high">Alta</span></td>
+              </tr>
+              <tr>
+                <td><strong>🎓 Onboarding 2.0</strong></td>
+                <td style="color:var(--gray-400);">Activo · Flujo 6 etapas</td>
+                <td><span class="cell-placeholder"></span></td>
+                <td><span class="priority-badge high">Alta</span></td>
+              </tr>
+              <tr>
+                <td><strong>🤖 Chatbot AI</strong></td>
+                <td style="color:var(--gray-400);">Activo · 12 flujos</td>
+                <td><span class="cell-placeholder"></span></td>
+                <td><span class="priority-badge med">Media</span></td>
+              </tr>
+              <tr>
+                <td><strong>🎖️ Reconocimientos</strong></td>
+                <td style="color:var(--gray-400);">Activo · Peer to peer</td>
+                <td><span class="cell-placeholder"></span></td>
+                <td><span class="priority-badge med">Media</span></td>
+              </tr>
+              <tr>
+                <td><strong>📁 Documentos</strong></td>
+                <td style="color:var(--gray-400);">Activo · 8 tipos</td>
+                <td><span class="cell-placeholder"></span></td>
+                <td><span class="priority-badge med">Media</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bottom-note" style="margin-top:16px;">
+          <span>✏️</span>
+          <span>Las celdas "Definición Colombia" se completarán en vivo durante el workshop.</span>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>12 / 13</span></div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════
+         SLIDE 13 — PRÓXIMOS PASOS
+    ═══════════════════════════════════ -->
+    <div class="slide" id="s13">
+      <div class="top-accent"></div>
+      <div class="slide-inner padded-tight">
+        <div class="slide-header">
+          <div class="chip" style="margin-bottom:12px;">Plan</div>
+          <h2>Próximos pasos</h2>
+          <p>Roadmap de implementación post-discovery</p>
+        </div>
+
+        <div class="roadmap-row">
+          <div class="rm-step">
+            <div class="rm-header">
+              <div class="rm-number" style="background:var(--humand-blue);">01</div>
+              <div class="rm-name">Discovery</div>
+              <div class="rm-period">Semana 1</div>
+            </div>
+            <div class="rm-card" style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;">
+              <div class="rm-task">Workshop módulos</div>
+              <div class="rm-task">Validación equipo</div>
+              <div class="rm-task">Decisiones clave</div>
+            </div>
+          </div>
+
+          <div class="rm-step">
+            <div class="rm-header">
+              <div class="rm-number" style="background:#4A65CC;">02</div>
+              <div class="rm-name">Definiciones</div>
+              <div class="rm-period">Semana 2</div>
+            </div>
+            <div class="rm-card" style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;">
+              <div class="rm-task">Documento de alcance</div>
+              <div class="rm-task">Aprobación cliente</div>
+              <div class="rm-task">Priorización fases</div>
+            </div>
+          </div>
+
+          <div class="rm-step">
+            <div class="rm-header">
+              <div class="rm-number" style="background:#6378D8;">03</div>
+              <div class="rm-name">Configuración</div>
+              <div class="rm-period">Semanas 3–6</div>
+            </div>
+            <div class="rm-card" style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;">
+              <div class="rm-task">Setup por módulo</div>
+              <div class="rm-task">Carga de datos</div>
+              <div class="rm-task">Integraciones</div>
+            </div>
+          </div>
+
+          <div class="rm-step">
+            <div class="rm-header">
+              <div class="rm-number" style="background:#7A8FDE;">04</div>
+              <div class="rm-name">Validación</div>
+              <div class="rm-period">Semana 7</div>
+            </div>
+            <div class="rm-card" style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;">
+              <div class="rm-task">UAT con el equipo</div>
+              <div class="rm-task">Ajustes finales</div>
+              <div class="rm-task">Sign-off cliente</div>
+            </div>
+          </div>
+
+          <div class="rm-step">
+            <div class="rm-header">
+              <div class="rm-number" style="background:#92A3E5;">05</div>
+              <div class="rm-name">Lanzamiento</div>
+              <div class="rm-period">Semana 8+</div>
+            </div>
+            <div class="rm-card" style="background:var(--humand-blue-pale);border:1px solid #DDE3F5;">
+              <div class="rm-task">Go live</div>
+              <div class="rm-task">Comunicación interna</div>
+              <div class="rm-task">Soporte hypercare</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
+          <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:14px 24px;text-align:center;box-shadow:var(--shadow-sm);">
+            <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Próxima reunión</div>
+            <div style="font-size:15px;font-weight:600;color:var(--gray-800);">A definir post-workshop</div>
+          </div>
+          <div style="background:var(--humand-blue);border-radius:var(--radius-md);padding:14px 32px;text-align:center;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:15px;font-weight:600;color:white;">¿Comenzamos?</span>
+            <span style="font-size:18px;">🚀</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-num"><span class="humand-brand">Humand</span><span>13 / 13</span></div>
+    </div>
+
+  </div><!-- /deck-scaler -->
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<div class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">&#8592;</button>
+  <div class="nav-dots" id="navDots"></div>
+  <div class="nav-counter" id="navCounter">1 / 13</div>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  // Build dots
+  const dotsContainer = document.getElementById('navDots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsContainer.appendChild(d);
+  });
+
+  function goTo(idx) {
+    slides[current].classList.remove('active');
+    slides[current].classList.add('prev');
+    setTimeout(() => slides[idx === current ? current : (current < idx ? current : idx)].classList.remove('prev'), 450);
+
+    const old = current;
+    current = idx;
+
+    slides[old].classList.remove('active', 'prev');
+    slides[current].classList.remove('prev');
+    slides[current].classList.add('active');
+
+    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+    document.getElementById('navCounter').textContent = (current + 1) + ' / ' + total;
+  }
+
+  function navigate(dir) {
+    const next = Math.max(0, Math.min(total - 1, current + dir));
+    if (next !== current) goTo(next);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
+  });
+
+  // Scale to fit viewport
+  function scaleToFit() {
+    const scaler = document.getElementById('deckScaler');
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scaleX = vw / 1280;
+    const scaleY = vh / 720;
+    const scale = Math.min(scaleX, scaleY) * 0.94;
+    scaler.style.transform = `scale(${scale})`;
+  }
+
+  window.addEventListener('resize', scaleToFit);
+  scaleToFit();
+</script>
+
+</body>
+</html>

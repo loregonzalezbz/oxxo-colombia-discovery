@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OXXO Colombia — Discovery de Implementación · Humand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  /* ─── TOKENS ─────────────────────────────────────────── */
+  :root {
+    --blue:        #2F4CB5;
+    --blue-mid:    #3D5CC6;
+    --blue-light:  #EEF1FA;
+    --blue-xlight: #F4F6FC;
+    --blue-dark:   #1E3490;
+    --white:       #FFFFFF;
+    --ink:         #0E1A3A;
+    --ink-mid:     #3A4668;
+    --ink-light:   #7886A8;
+    --ink-xlight:  #B4BCCE;
+    --surface:     #F8F9FC;
+    --border:      #E6EAF5;
+    --shadow-sm:   0 1px 4px rgba(47,76,181,.06), 0 4px 16px rgba(47,76,181,.08);
+    --shadow-md:   0 2px 8px rgba(47,76,181,.08), 0 12px 40px rgba(47,76,181,.12);
+    --shadow-lg:   0 8px 32px rgba(47,76,181,.16), 0 24px 64px rgba(47,76,181,.1);
+    --r-sm:  10px;
+    --r-md:  16px;
+    --r-lg:  24px;
+    --r-xl:  32px;
+  }
+
+  /* ─── RESET ───────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; font-family: 'Inter', system-ui, sans-serif; background: #1a1f35; overflow: hidden; }
+
+  /* ─── DECK CONTAINER ────────────────────────────────── */
+  .deck {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ─── SLIDE BASE ────────────────────────────────────── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease, transform .5s cubic-bezier(.4,0,.2,1);
+    transform: translateX(40px);
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+  }
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  /* ─── SLIDE CANVAS ──────────────────────────────────── */
+  .canvas {
+    width: 1280px;
+    height: 720px;
+    background: var(--white);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    flex-shrink: 0;
+  }
+
+  /* ─── NAV ───────────────────────────────────────────── */
+  .nav {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(14,26,58,.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.1);
+    padding: 8px 16px;
+    border-radius: 100px;
+    z-index: 100;
+  }
+  .nav-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+    font-size: 16px;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,.2); }
+  .nav-counter { color: rgba(255,255,255,.7); font-size: 13px; font-weight: 500; min-width: 56px; text-align: center; }
+  .nav-dots { display: flex; gap: 6px; }
+  .nav-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,.3);
+    cursor: pointer; transition: all .2s;
+  }
+  .nav-dot.active { background: #fff; width: 18px; border-radius: 3px; }
+
+  /* ─── SLIDE HEADER (shared) ─────────────────────────── */
+  .slide-header {
+    padding: 48px 64px 0;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue-xlight);
+    color: var(--blue);
+    font-size: 12px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 100px;
+    margin-bottom: 20px;
+  }
+  .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+  .slide-title {
+    font-size: 48px; font-weight: 800; color: var(--ink);
+    line-height: 1.1; letter-spacing: -.02em;
+  }
+  .slide-title span { color: var(--blue); }
+  .slide-sub {
+    font-size: 17px; color: var(--ink-light); font-weight: 400;
+    margin-top: 10px; line-height: 1.5;
+  }
+
+  /* ─── LOGO MARK ─────────────────────────────────────── */
+  .logo-mark {
+    position: absolute;
+    top: 36px; right: 52px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-h {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 18px;
+  }
+  .logo-text { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
+
+  /* ─── CARD BASE ────────────────────────────────────── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 28px;
+  }
+  .card-blue {
+    background: var(--blue);
+    border: none;
+    color: #fff;
+  }
+  .card-surface {
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  /* ─── PLACEHOLDER ───────────────────────────────────── */
+  .placeholder {
+    background: var(--blue-xlight);
+    border: 2px dashed var(--border);
+    border-radius: var(--r-md);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px;
+    color: var(--ink-light);
+  }
+  .placeholder-icon {
+    width: 40px; height: 40px;
+    background: var(--white);
+    border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .placeholder span { font-size: 12px; font-weight: 500; }
+
+  /* ─── TAG ───────────────────────────────────────────── */
+  .tag {
+    display: inline-flex; align-items: center;
+    background: var(--blue-xlight); color: var(--blue);
+    font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 100px;
+  }
+  .tag-green { background: #EDFAF4; color: #0E8A4A; }
+  .tag-orange { background: #FFF5EA; color: #D47D0A; }
+  .tag-red { background: #FEEEEE; color: #C0362C; }
+
+  /* ─── DISCOVERY Q CARD ──────────────────────────────── */
+  .q-card {
+    background: var(--blue-xlight);
+    border-radius: var(--r-sm);
+    padding: 14px 18px;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .q-num {
+    min-width: 22px; height: 22px;
+    background: var(--blue); color: #fff;
+    border-radius: 6px;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .q-text { font-size: 14px; color: var(--ink-mid); font-weight: 500; line-height: 1.4; }
+
+  /* ─── ICON SVG WRAPPER ──────────────────────────────── */
+  .icon-wrap {
+    width: 48px; height: 48px; border-radius: var(--r-sm);
+    background: var(--blue-xlight);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-wrap svg { color: var(--blue); }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 1 — COVER
+  ═══════════════════════════════════════════════════════ */
+  #s1 .canvas {
+    background: linear-gradient(135deg, #0E1A3A 0%, #1E3490 50%, #2F4CB5 100%);
+    display: flex; flex-direction: column;
+  }
+  .s1-bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: .08;
+    background: #fff;
+    pointer-events: none;
+  }
+  .s1-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none;
+  }
+  .s1-content {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; height: 100%; padding: 80px 100px;
+  }
+  .s1-left { flex: 1; }
+  .s1-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.1); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.9);
+    font-size: 13px; font-weight: 600; letter-spacing: .04em;
+    padding: 8px 18px; border-radius: 100px;
+    margin-bottom: 32px;
+  }
+  .s1-title {
+    font-size: 64px; font-weight: 900;
+    color: #fff; line-height: 1.0; letter-spacing: -.03em;
+    margin-bottom: 12px;
+  }
+  .s1-title .accent { color: #7B9EFF; }
+  .s1-discovery {
+    font-size: 28px; font-weight: 700; color: rgba(255,255,255,.8);
+    letter-spacing: -.01em; margin-bottom: 24px;
+  }
+  .s1-sub {
+    font-size: 16px; color: rgba(255,255,255,.5);
+    max-width: 420px; line-height: 1.6; font-weight: 400;
+  }
+  .s1-meta {
+    display: flex; gap: 24px; margin-top: 48px;
+  }
+  .s1-meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .s1-meta-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .08em; }
+  .s1-meta-value { font-size: 15px; font-weight: 600; color: rgba(255,255,255,.8); }
+  .s1-right {
+    width: 380px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .s1-illustration {
+    width: 320px; height: 320px; position: relative;
+  }
+  .s1-card-float {
+    position: absolute;
+    background: rgba(255,255,255,.08); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: var(--r-lg);
+    padding: 16px 20px;
+    color: #fff;
+  }
+  .s1-logo { position: absolute; top: 32px; right: 48px; display: flex; align-items: center; gap: 10px; }
+  .s1-logo-h { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px; }
+  .s1-logo-text { font-size: 16px; font-weight: 700; color: rgba(255,255,255,.8); }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 2 — OBJETIVO
+  ═══════════════════════════════════════════════════════ */
+  #s2 .canvas { display: flex; flex-direction: column; }
+  .s2-body {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 0 80px 48px;
+    gap: 48px;
+  }
+  .s2-big-card {
+    flex: 1; background: var(--blue-xlight);
+    border-radius: var(--r-xl); padding: 52px 56px;
+    position: relative; overflow: hidden;
+  }
+  .s2-quote-mark {
+    font-size: 120px; font-weight: 900; color: var(--blue);
+    opacity: .12; position: absolute; top: -20px; left: 36px;
+    line-height: 1; pointer-events: none;
+  }
+  .s2-quote-text {
+    font-size: 24px; font-weight: 600; color: var(--ink);
+    line-height: 1.5; position: relative; z-index: 1;
+    max-width: 620px;
+  }
+  .s2-quote-text em { color: var(--blue); font-style: normal; }
+  .s2-side { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+  .s2-stat { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 24px; }
+  .s2-stat-num { font-size: 36px; font-weight: 800; color: var(--blue); }
+  .s2-stat-label { font-size: 13px; color: var(--ink-light); margin-top: 4px; font-weight: 500; }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 3 — AGENDA
+  ═══════════════════════════════════════════════════════ */
+  #s3 .canvas { display: flex; flex-direction: column; }
+  .s3-body { flex: 1; display: flex; align-items: center; padding: 0 64px 52px; }
+  .agenda-timeline {
+    width: 100%; display: flex; align-items: flex-start; gap: 0;
+    position: relative;
+  }
+  .agenda-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    position: relative;
+  }
+  .agenda-item:not(:last-child)::after {
+    content: '';
+    position: absolute; top: 28px; left: 50%; right: -50%;
+    height: 2px; background: var(--border);
+    z-index: 0;
+  }
+  .agenda-num-wrap { position: relative; z-index: 1; margin-bottom: 20px; }
+  .agenda-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; color: var(--ink-light);
+    transition: all .3s;
+  }
+  .agenda-item.active .agenda-num {
+    background: var(--blue); border-color: var(--blue);
+    color: #fff; box-shadow: 0 0 0 6px var(--blue-xlight);
+  }
+  .agenda-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 20px 16px;
+    width: 100%; max-width: 192px;
+    text-align: center; box-shadow: var(--shadow-sm);
+  }
+  .agenda-item.active .agenda-card { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-xlight), var(--shadow-sm); }
+  .agenda-card-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .agenda-card-sub { font-size: 12px; color: var(--ink-light); margin-top: 4px; }
+  .agenda-card-time {
+    display: inline-flex; align-items: center;
+    background: var(--blue-xlight); color: var(--blue);
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 100px; margin-top: 10px;
+  }
+  .agenda-item.active .agenda-card-time { background: var(--blue); color: #fff; }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 4 — MÓDULOS
+  ═══════════════════════════════════════════════════════ */
+  #s4 .canvas { display: flex; flex-direction: column; }
+  .s4-body { flex: 1; padding: 28px 64px 48px; display: flex; flex-direction: column; justify-content: center; }
+  .modules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .mod-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 28px 24px;
+    display: flex; flex-direction: column; gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .25s, transform .25s, border-color .25s;
+    cursor: default;
+  }
+  .mod-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--blue); }
+  .mod-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--blue-xlight); display: flex; align-items: center; justify-content: center; }
+  .mod-icon svg { width: 26px; height: 26px; stroke: var(--blue); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .mod-name { font-size: 17px; font-weight: 700; color: var(--ink); }
+  .mod-desc { font-size: 13px; color: var(--ink-light); line-height: 1.5; }
+  .mod-tag { align-self: flex-start; }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 5 — ESTADO MÉXICO
+  ═══════════════════════════════════════════════════════ */
+  #s5 .canvas { display: flex; flex-direction: column; }
+  .s5-body { flex: 1; padding: 20px 64px 36px; display: flex; flex-direction: column; justify-content: center; }
+  .screenshots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 16px; }
+  .ss-placeholder {
+    background: var(--blue-xlight); border: 2px dashed var(--border);
+    border-radius: var(--r-md); aspect-ratio: 16/10;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  }
+  .ss-icon { width: 36px; height: 36px; background: var(--white); border-radius: 8px; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; }
+  .ss-icon svg { width: 18px; height: 18px; stroke: var(--blue); fill: none; stroke-width: 1.8; }
+  .ss-name { font-size: 12px; font-weight: 600; color: var(--ink-mid); }
+  .s5-note {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--blue-xlight); border-radius: var(--r-md);
+    padding: 12px 20px;
+  }
+  .s5-note-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+  .s5-note-text { font-size: 13px; color: var(--blue); font-weight: 500; }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDES 6-8, 11 — MODULE DISCOVERY (2-col)
+  ═══════════════════════════════════════════════════════ */
+  .mod-discovery-layout {
+    display: flex; flex: 1; gap: 0; overflow: hidden;
+  }
+  .mod-left {
+    width: 480px; flex-shrink: 0;
+    padding: 28px 36px 36px 64px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .mod-right {
+    flex: 1; background: var(--blue-xlight);
+    padding: 36px 48px 36px 36px;
+    display: flex; flex-direction: column; gap: 14px;
+    overflow-y: auto;
+  }
+  .mod-right-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .mod-screenshot {
+    flex: 1; background: var(--white);
+    border: 2px dashed var(--border);
+    border-radius: var(--r-lg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  }
+  .mod-screenshot-icon { width: 48px; height: 48px; background: var(--blue-xlight); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .mod-screenshot-icon svg { width: 24px; height: 24px; stroke: var(--blue); fill: none; stroke-width: 1.8; }
+  .mod-screenshot-label { font-size: 13px; font-weight: 500; color: var(--ink-light); }
+  .mod-screenshot-sub { font-size: 11px; color: var(--ink-xlight); }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 9 — GESTIÓN DE SERVICIOS
+  ═══════════════════════════════════════════════════════ */
+  #s9 .canvas { display: flex; flex-direction: column; }
+  .s9-body { flex: 1; display: flex; overflow: hidden; }
+  .s9-left { flex: 1; padding: 24px 32px 36px 64px; display: flex; flex-direction: column; }
+  .services-catalog { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex: 1; }
+  .svc-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 18px 16px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .svc-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--blue-xlight); display: flex; align-items: center; justify-content: center; }
+  .svc-icon svg { width: 20px; height: 20px; stroke: var(--blue); fill: none; stroke-width: 1.8; }
+  .svc-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .svc-count { font-size: 11px; color: var(--ink-light); }
+  .s9-right { width: 320px; flex-shrink: 0; background: var(--blue-xlight); padding: 28px 40px 36px 24px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 10 — ONBOARDING
+  ═══════════════════════════════════════════════════════ */
+  #s10 .canvas { display: flex; flex-direction: column; }
+  .s10-body { flex: 1; display: flex; overflow: hidden; }
+  .s10-left { flex: 1; padding: 24px 32px 36px 64px; display: flex; flex-direction: column; gap: 20px; }
+  .onboarding-flow { display: flex; align-items: center; gap: 0; flex: 1; }
+  .flow-step {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute; top: 28px; left: 50%; right: -50%;
+    height: 2px; background: var(--border); z-index: 0;
+  }
+  .flow-node {
+    position: relative; z-index: 1;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .flow-node svg { width: 22px; height: 22px; stroke: var(--ink-light); fill: none; stroke-width: 1.8; }
+  .flow-step.highlight .flow-node { background: var(--blue); border-color: var(--blue); box-shadow: 0 0 0 5px var(--blue-xlight); }
+  .flow-step.highlight .flow-node svg { stroke: #fff; }
+  .flow-label { font-size: 12px; font-weight: 600; color: var(--ink-mid); text-align: center; }
+  .flow-step.highlight .flow-label { color: var(--blue); }
+  .s10-right { width: 320px; flex-shrink: 0; background: var(--blue-xlight); padding: 28px 40px 36px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .onboarding-detail { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px 20px; }
+  .onboarding-detail-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .onboarding-detail-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .onboarding-chip { background: var(--blue-xlight); color: var(--blue); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 12 — RESUMEN DEFINICIONES
+  ═══════════════════════════════════════════════════════ */
+  #s12 .canvas { display: flex; flex-direction: column; }
+  .s12-body { flex: 1; padding: 20px 64px 48px; display: flex; flex-direction: column; }
+  .def-table { width: 100%; border-collapse: separate; border-spacing: 0; flex: 1; }
+  .def-table th {
+    background: var(--blue-xlight); color: var(--ink-mid);
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 14px 20px; text-align: left;
+  }
+  .def-table th:first-child { border-radius: var(--r-sm) 0 0 var(--r-sm); }
+  .def-table th:last-child { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+  .def-table td { padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--ink-mid); vertical-align: middle; }
+  .def-table tr:last-child td { border-bottom: none; }
+  .def-table tr td:first-child { font-weight: 600; color: var(--ink); }
+  .def-edit { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-light); font-size: 13px; }
+  .def-edit-line { flex: 1; height: 1px; background: var(--border); min-width: 80px; }
+  .edit-cursor { width: 2px; height: 14px; background: var(--blue); animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ═══════════════════════════════════════════════════════
+     SLIDE 13 — PRÓXIMOS PASOS
+  ═══════════════════════════════════════════════════════ */
+  #s13 .canvas { display: flex; flex-direction: column; }
+  .s13-body { flex: 1; padding: 24px 64px 48px; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+  .roadmap { display: flex; align-items: stretch; gap: 0; }
+  .rm-item {
+    flex: 1; position: relative;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .rm-item:not(:last-child)::after {
+    content: '';
+    position: absolute; top: 28px; left: calc(50% + 28px);
+    right: calc(-50% + 28px);
+    height: 2px; background: var(--border);
+    z-index: 0;
+  }
+  .rm-node {
+    position: relative; z-index: 1;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .rm-node svg { width: 22px; height: 22px; stroke: var(--ink-light); fill: none; stroke-width: 1.8; }
+  .rm-item.done .rm-node { background: var(--blue); border-color: var(--blue); }
+  .rm-item.done .rm-node svg { stroke: #fff; }
+  .rm-item.current .rm-node { background: var(--white); border-color: var(--blue); box-shadow: 0 0 0 6px var(--blue-xlight); }
+  .rm-item.current .rm-node svg { stroke: var(--blue); }
+  .rm-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 16px 14px;
+    width: 100%; max-width: 188px; text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .rm-item.current .rm-card { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-xlight), var(--shadow-sm); }
+  .rm-card-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .rm-card-sub { font-size: 12px; color: var(--ink-light); margin-top: 4px; line-height: 1.4; }
+  .rm-card-status { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; }
+  .rm-card-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .rm-card-status-text { font-size: 11px; font-weight: 600; }
+  .s13-cta { display: flex; align-items: center; justify-content: space-between; background: var(--blue); border-radius: var(--r-lg); padding: 24px 32px; }
+  .s13-cta-text { font-size: 18px; font-weight: 700; color: #fff; }
+  .s13-cta-sub { font-size: 14px; color: rgba(255,255,255,.6); margin-top: 4px; }
+  .s13-cta-btn { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ═══════════════ SLIDE 1 ═══════════════ -->
+  <div class="slide active" id="s1">
+    <div class="canvas">
+      <div class="s1-grid"></div>
+      <div class="s1-bg-circle" style="width:600px;height:600px;top:-200px;right:-100px;"></div>
+      <div class="s1-bg-circle" style="width:300px;height:300px;bottom:-80px;left:60px;"></div>
+
+      <div class="s1-logo">
+        <div class="s1-logo-h">H</div>
+        <div class="s1-logo-text">Humand</div>
+      </div>
+
+      <div class="s1-content">
+        <div class="s1-left">
+          <div class="s1-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            Discovery Workshop
+          </div>
+          <div class="s1-title">OXXO<br/><span class="accent">Colombia</span></div>
+          <div class="s1-discovery">Discovery de Implementación</div>
+          <div class="s1-sub">Definición funcional basada en la experiencia de OXXO México</div>
+          <div class="s1-meta">
+            <div class="s1-meta-item">
+              <span class="s1-meta-label">Proyecto</span>
+              <span class="s1-meta-value">Implementación Humand</span>
+            </div>
+            <div class="s1-meta-item">
+              <span class="s1-meta-label">Tipo</span>
+              <span class="s1-meta-value">Discovery Workshop</span>
+            </div>
+            <div class="s1-meta-item">
+              <span class="s1-meta-label">Módulos</span>
+              <span class="s1-meta-value">6 módulos contratados</span>
+            </div>
+          </div>
+        </div>
+        <div class="s1-right">
+          <div class="s1-illustration">
+            <!-- Floating cards illustration -->
+            <div class="s1-card-float" style="top:20px;left:0;width:200px;">
+              <div style="font-size:11px;opacity:.6;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Módulos</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span style="background:rgba(255,255,255,.12);padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;">Comunicación</span>
+                <span style="background:rgba(255,255,255,.12);padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;">Onboarding</span>
+                <span style="background:rgba(255,255,255,.12);padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;">Chatbot AI</span>
+                <span style="background:rgba(255,255,255,.12);padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;">+3</span>
+              </div>
+            </div>
+            <div class="s1-card-float" style="bottom:40px;right:0;width:210px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:13px;font-weight:700;">México → Colombia</div>
+                  <div style="font-size:11px;opacity:.6;margin-top:2px;">Implementación referencia</div>
+                </div>
+              </div>
+            </div>
+            <div class="s1-card-float" style="top:140px;right:10px;width:120px;text-align:center;">
+              <div style="font-size:28px;font-weight:800;">6</div>
+              <div style="font-size:11px;opacity:.6;margin-top:2px;">Módulos<br>contratados</div>
+            </div>
+            <!-- decorative circles -->
+            <div style="position:absolute;bottom:0;left:30px;width:80px;height:80px;border-radius:50%;border:2px solid rgba(255,255,255,.1);"></div>
+            <div style="position:absolute;bottom:16px;left:46px;width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,.15);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 2 ═══════════════ -->
+  <div class="slide" id="s2">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Sesión</div>
+        <div class="slide-title">Objetivo de la <span>sesión</span></div>
+      </div>
+      <div class="s2-body">
+        <div class="s2-big-card">
+          <div class="s2-quote-mark">"</div>
+          <div class="s2-quote-text">
+            Revisaremos cómo está configurado actualmente <em>OXXO México</em> para definir, junto al equipo de Colombia, qué procesos desean <em>implementar, priorizar y adaptar</em> a su operación.
+          </div>
+          <div style="display:flex;gap:12px;margin-top:32px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+              <span style="font-size:14px;font-weight:600;color:var(--ink-mid);">Referencia México</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#0E8A4A;"></div>
+              <span style="font-size:14px;font-weight:600;color:var(--ink-mid);">Decisiones Colombia</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#D47D0A;"></div>
+              <span style="font-size:14px;font-weight:600;color:var(--ink-mid);">Adaptaciones locales</span>
+            </div>
+          </div>
+        </div>
+        <div class="s2-side">
+          <div class="s2-stat">
+            <div class="s2-stat-num">6</div>
+            <div class="s2-stat-label">Módulos a definir</div>
+          </div>
+          <div class="s2-stat">
+            <div class="s2-stat-num" style="font-size:28px;">OXXO</div>
+            <div class="s2-stat-label">México como referencia base</div>
+          </div>
+          <div class="card" style="background:var(--blue);border:none;">
+            <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:8px;">Resultado esperado</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;">Plan de configuración personalizado para la operación de Colombia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 3 ═══════════════ -->
+  <div class="slide" id="s3">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Workshop</div>
+        <div class="slide-title">Agenda del <span>día</span></div>
+        <div class="slide-sub">Estructura de la sesión de discovery</div>
+      </div>
+      <div class="s3-body">
+        <div class="agenda-timeline">
+          <div class="agenda-item">
+            <div class="agenda-num-wrap"><div class="agenda-num">1</div></div>
+            <div class="agenda-card">
+              <div style="margin-bottom:6px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              </div>
+              <div class="agenda-card-title">Objetivo</div>
+              <div class="agenda-card-sub">Contexto y alcance</div>
+              <div class="agenda-card-time">10 min</div>
+            </div>
+          </div>
+          <div class="agenda-item active">
+            <div class="agenda-num-wrap"><div class="agenda-num">2</div></div>
+            <div class="agenda-card">
+              <div style="margin-bottom:6px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+              </div>
+              <div class="agenda-card-title">Estado México</div>
+              <div class="agenda-card-sub">Revisión implementación actual</div>
+              <div class="agenda-card-time">20 min</div>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-num-wrap"><div class="agenda-num">3</div></div>
+            <div class="agenda-card">
+              <div style="margin-bottom:6px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="agenda-card-title">Discovery</div>
+              <div class="agenda-card-sub">Por módulo con preguntas clave</div>
+              <div class="agenda-card-time">60 min</div>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-num-wrap"><div class="agenda-num">4</div></div>
+            <div class="agenda-card">
+              <div style="margin-bottom:6px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="agenda-card-title">Priorización</div>
+              <div class="agenda-card-sub">Definir orden de implementación</div>
+              <div class="agenda-card-time">20 min</div>
+            </div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-num-wrap"><div class="agenda-num">5</div></div>
+            <div class="agenda-card">
+              <div style="margin-bottom:6px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </div>
+              <div class="agenda-card-title">Próximos pasos</div>
+              <div class="agenda-card-sub">Plan y responsables</div>
+              <div class="agenda-card-time">10 min</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 4 ═══════════════ -->
+  <div class="slide" id="s4">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Alcance</div>
+        <div class="slide-title">Módulos <span>contratados</span></div>
+        <div class="slide-sub">Los 6 módulos que se definirán en este discovery</div>
+      </div>
+      <div class="s4-body">
+        <div class="modules-grid">
+
+          <div class="mod-card">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div class="mod-name">Comunicación</div>
+              <div class="mod-desc">Noticias, anuncios y comunicados segmentados por área o rol</div>
+            </div>
+            <div class="tag mod-tag">Módulo 1</div>
+          </div>
+
+          <div class="mod-card">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/><path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/></svg>
+            </div>
+            <div>
+              <div class="mod-name">Gestión de Servicios</div>
+              <div class="mod-desc">Catálogo de tickets y servicios internos con flujos de aprobación</div>
+            </div>
+            <div class="tag mod-tag">Módulo 2</div>
+          </div>
+
+          <div class="mod-card">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="mod-name">Onboarding 2.0</div>
+              <div class="mod-desc">Flujo completo de ingreso, documentos, tareas y capacitaciones</div>
+            </div>
+            <div class="tag mod-tag">Módulo 3</div>
+          </div>
+
+          <div class="mod-card">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4h-2V7h2z"/></svg>
+            </div>
+            <div>
+              <div class="mod-name">Chatbot AI</div>
+              <div class="mod-desc">Asistente inteligente para resolver consultas frecuentes de colaboradores</div>
+            </div>
+            <div class="tag mod-tag">Módulo 4</div>
+          </div>
+
+          <div class="mod-card">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div>
+              <div class="mod-name">Reconocimientos</div>
+              <div class="mod-desc">Programa de reconocimiento entre colaboradores y campañas especiales</div>
+            </div>
+            <div class="tag mod-tag">Módulo 5</div>
+          </div>
+
+          <div class="mod-card">
+            <div class="mod-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div>
+              <div class="mod-name">Documentos Personales</div>
+              <div class="mod-desc">Repositorio digital de documentos laborales por colaborador</div>
+            </div>
+            <div class="tag mod-tag">Módulo 6</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 5 ═══════════════ -->
+  <div class="slide" id="s5">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Referencia</div>
+        <div class="slide-title">¿Cómo funciona <span>OXXO México</span>?</div>
+      </div>
+      <div class="s5-body">
+        <div class="screenshots-grid">
+          <div class="ss-placeholder">
+            <div class="ss-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div class="ss-name">Comunicación</div>
+          </div>
+          <div class="ss-placeholder">
+            <div class="ss-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+            <div class="ss-name">Reconocimientos</div>
+          </div>
+          <div class="ss-placeholder">
+            <div class="ss-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8"/><path d="M12 12v4"/><path d="M10 14h4"/></svg></div>
+            <div class="ss-name">Service Management</div>
+          </div>
+          <div class="ss-placeholder">
+            <div class="ss-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="ss-name">Onboarding</div>
+          </div>
+          <div class="ss-placeholder">
+            <div class="ss-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="ss-name">Documentos</div>
+          </div>
+          <div class="ss-placeholder">
+            <div class="ss-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4h-2V7h2z"/></svg></div>
+            <div class="ss-name">Chatbot AI</div>
+          </div>
+        </div>
+        <div class="s5-note">
+          <div class="s5-note-dot"></div>
+          <div class="s5-note-text">Tomaremos la implementación actual de México como punto de partida para el discovery.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 6 — COMUNICACIÓN ═══════════════ -->
+  <div class="slide" id="s6">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:40px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 1</div>
+        <div class="slide-title">Comuni<span>cación</span></div>
+      </div>
+      <div class="mod-discovery-layout" style="flex:1;margin-top:20px;">
+        <div class="mod-left">
+          <div class="mod-screenshot">
+            <div class="mod-screenshot-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div class="mod-screenshot-label">Screenshot OXXO México</div>
+            <div class="mod-screenshot-sub">Módulo Comunicación</div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <div style="flex:1;background:var(--blue-xlight);border-radius:var(--r-sm);padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);margin-bottom:4px;">MÉXICO</div>
+              <div style="font-size:12px;color:var(--ink-light);">Noticias, encuestas, videos</div>
+            </div>
+            <div style="flex:1;background:var(--blue);border-radius:var(--r-sm);padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:4px;">COLOMBIA</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.8);">Por definir →</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-right">
+          <div class="mod-right-title">
+            <svg style="display:inline;vertical-align:middle;margin-right:6px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué tipo de comunicación desean publicar? (noticias, encuestas, videos)</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién administrará las noticias? ¿Un equipo central o cada área?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Cómo segmentarán la comunicación? ¿Por área, región o tienda?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Qué grupos de comunicación necesitan crear?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Qué contenidos son prioritarios para el lanzamiento?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 7 — RECONOCIMIENTOS ═══════════════ -->
+  <div class="slide" id="s7">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:40px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 5</div>
+        <div class="slide-title">Recono<span>cimientos</span></div>
+      </div>
+      <div class="mod-discovery-layout" style="flex:1;margin-top:20px;">
+        <div class="mod-left">
+          <div class="mod-screenshot">
+            <div class="mod-screenshot-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+            <div class="mod-screenshot-label">Screenshot OXXO México</div>
+            <div class="mod-screenshot-sub">Módulo Reconocimientos</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div style="flex:1;background:var(--blue-xlight);border-radius:var(--r-sm);padding:12px 14px;text-align:center;">
+              <div style="font-size:24px;font-weight:800;color:var(--blue);">⭐</div>
+              <div style="font-size:11px;font-weight:600;color:var(--ink-mid);margin-top:4px;">Entre pares</div>
+            </div>
+            <div style="flex:1;background:var(--blue-xlight);border-radius:var(--r-sm);padding:12px 14px;text-align:center;">
+              <div style="font-size:24px;font-weight:800;color:var(--blue);">🏆</div>
+              <div style="font-size:11px;font-weight:600;color:var(--ink-mid);margin-top:4px;">Campañas</div>
+            </div>
+            <div style="flex:1;background:var(--blue-xlight);border-radius:var(--r-sm);padding:12px 14px;text-align:center;">
+              <div style="font-size:24px;font-weight:800;color:var(--blue);">👑</div>
+              <div style="font-size:11px;font-weight:600;color:var(--ink-mid);margin-top:4px;">Líderes</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-right">
+          <div class="mod-right-title">
+            <svg style="display:inline;vertical-align:middle;margin-right:6px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué comportamientos o logros quieren reconocer?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién puede dar reconocimientos? ¿Todos los colaboradores o solo líderes?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Será entre colaboradores, solo líderes a equipos, o ambos?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Habrá campañas especiales de reconocimiento? (cumpleaños, aniversarios)</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Necesitan categorías o "valores" asociados a los reconocimientos?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 8 — CHATBOT AI ═══════════════ -->
+  <div class="slide" id="s8">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:40px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 4</div>
+        <div class="slide-title">Chatbot <span>AI</span></div>
+      </div>
+      <div class="mod-discovery-layout" style="flex:1;margin-top:20px;">
+        <div class="mod-left">
+          <div class="mod-screenshot">
+            <div class="mod-screenshot-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/><path d="M9 13a3 3 0 0 0 6 0"/></svg>
+            </div>
+            <div class="mod-screenshot-label">Screenshot OXXO México</div>
+            <div class="mod-screenshot-sub">Módulo Chatbot AI</div>
+          </div>
+          <!-- Mini chat bubble mockup -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:12px;font-weight:700;">H</div>
+              <div style="background:var(--blue-xlight);border-radius:0 10px 10px 10px;padding:8px 12px;font-size:12px;color:var(--ink-mid);">¿En qué puedo ayudarte hoy?</div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <div style="background:var(--blue);border-radius:10px 0 10px 10px;padding:8px 12px;font-size:12px;color:#fff;">¿Cuáles son los beneficios?</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-right">
+          <div class="mod-right-title">
+            <svg style="display:inline;vertical-align:middle;margin-right:6px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué preguntas reciben frecuentemente de los colaboradores?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Qué información debería conocer el chatbot? (políticas, beneficios, procesos)</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Qué procesos quieren automatizar a través del chatbot?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Necesitan integraciones con otros sistemas? (HRIS, nómina)</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Cómo manejarán las consultas que el chatbot no pueda resolver?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 9 — GESTIÓN DE SERVICIOS ═══════════════ -->
+  <div class="slide" id="s9">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:36px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 2</div>
+        <div class="slide-title">Gestión de <span>Servicios</span></div>
+      </div>
+      <div class="s9-body">
+        <div class="s9-left">
+          <div style="font-size:13px;font-weight:700;color:var(--ink-mid);margin:16px 0 10px;">Catálogo de servicios sugerido</div>
+          <div class="services-catalog">
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+              <div class="svc-name">RRHH</div>
+              <div class="svc-count">Permisos, constancias, actualizaciones</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg></div>
+              <div class="svc-name">TI</div>
+              <div class="svc-count">Equipos, accesos, soporte técnico</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+              <div class="svc-name">Nómina</div>
+              <div class="svc-count">Consultas de pago, recibos, descuentos</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+              <div class="svc-name">Infraestructura</div>
+              <div class="svc-count">Instalaciones, mobiliario, espacios</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C12 6.5 7 2 2 2"/><path d="M12 12C12 6.5 17 2 22 2"/><path d="M2 22c0-5.5 4.5-10 10-10s10 4.5 10 10"/></svg></div>
+              <div class="svc-name">Operaciones</div>
+              <div class="svc-count">Procesos, logística, tiendas</div>
+            </div>
+            <div class="svc-card">
+              <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+              <div class="svc-name">Beneficios</div>
+              <div class="svc-count">Seguros, descuentos, convenios</div>
+            </div>
+          </div>
+        </div>
+        <div class="s9-right">
+          <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">
+            <svg style="display:inline;vertical-align:middle;margin-right:6px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué servicios tendrá el catálogo inicial?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién atenderá cada categoría de servicio?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Habrá SLA definidos por tipo de solicitud?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Necesitan flujos de aprobación? ¿De cuántos niveles?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Cómo desean clasificar y priorizar los tickets?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 10 — ONBOARDING ═══════════════ -->
+  <div class="slide" id="s10">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:36px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 3</div>
+        <div class="slide-title">Onboarding <span>2.0</span></div>
+      </div>
+      <div class="s10-body">
+        <div class="s10-left">
+          <div class="onboarding-flow">
+            <div class="flow-step highlight">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+              <div class="flow-label">Ingreso</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="flow-label">Documentos</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div class="flow-label">Tareas</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+              <div class="flow-label">Capacitaciones</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+              <div class="flow-label">Primer día</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+              <div class="flow-label">Seguimiento</div>
+            </div>
+          </div>
+          <div class="onboarding-detail">
+            <div class="onboarding-detail-title">Estructura en México</div>
+            <div class="onboarding-detail-items">
+              <span class="onboarding-chip">Pre-ingreso</span>
+              <span class="onboarding-chip">Bienvenida</span>
+              <span class="onboarding-chip">Firma docs</span>
+              <span class="onboarding-chip">Inducción</span>
+              <span class="onboarding-chip">30 días</span>
+              <span class="onboarding-chip">60 días</span>
+              <span class="onboarding-chip">90 días</span>
+            </div>
+          </div>
+        </div>
+        <div class="s10-right">
+          <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">
+            <svg style="display:inline;vertical-align:middle;margin-right:6px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué documentos deben firmar los nuevos ingresos?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Cuáles son las tareas críticas de los primeros 30 días?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Quién es responsable del seguimiento del onboarding?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Habrá capacitaciones obligatorias? ¿De qué tipo?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Necesitan planes diferenciados por cargo o área?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 11 — DOCUMENTOS ═══════════════ -->
+  <div class="slide" id="s11">
+    <div class="canvas" style="display:flex;flex-direction:column;">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div style="padding:40px 64px 0;">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Módulo 6</div>
+        <div class="slide-title">Documentos <span>Personales</span></div>
+      </div>
+      <div class="mod-discovery-layout" style="flex:1;margin-top:20px;">
+        <div class="mod-left">
+          <!-- Folder illustration -->
+          <div class="mod-screenshot">
+            <div style="width:120px;height:90px;position:relative;">
+              <div style="position:absolute;bottom:0;width:100%;height:70px;background:var(--blue-xlight);border-radius:8px 8px 8px 8px;border:1.5px solid var(--border);"></div>
+              <div style="position:absolute;bottom:55px;left:0;width:55%;height:20px;background:var(--blue-xlight);border-radius:6px 6px 0 0;border:1.5px solid var(--border);border-bottom:none;"></div>
+              <div style="position:absolute;bottom:14px;left:12px;right:12px;display:flex;flex-direction:column;gap:5px;">
+                <div style="height:6px;background:var(--border);border-radius:3px;"></div>
+                <div style="height:6px;background:var(--border);border-radius:3px;width:80%;"></div>
+                <div style="height:6px;background:var(--blue);border-radius:3px;width:60%;opacity:.4;"></div>
+              </div>
+            </div>
+            <div class="mod-screenshot-label">Carpeta digital de colaborador</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Contrato</div>
+              <div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Firmado digitalmente</div>
+            </div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Nómina</div>
+              <div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Recibos de pago</div>
+            </div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Certificados</div>
+              <div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Capacitaciones</div>
+            </div>
+            <div style="background:var(--blue-xlight);border-radius:var(--r-sm);padding:10px 12px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink-mid);">Políticas</div>
+              <div style="font-size:10px;color:var(--ink-light);margin-top:2px;">Código de conducta</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-right">
+          <div class="mod-right-title">
+            <svg style="display:inline;vertical-align:middle;margin-right:6px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Preguntas Discovery
+          </div>
+          <div class="q-card"><div class="q-num">1</div><div class="q-text">¿Qué tipos de documentos compartirán con los colaboradores?</div></div>
+          <div class="q-card"><div class="q-num">2</div><div class="q-text">¿Quién administrará y cargará los documentos?</div></div>
+          <div class="q-card"><div class="q-num">3</div><div class="q-text">¿Cuáles son los documentos obligatorios para todos?</div></div>
+          <div class="q-card"><div class="q-num">4</div><div class="q-text">¿Cómo será el proceso de actualización de documentos?</div></div>
+          <div class="q-card"><div class="q-num">5</div><div class="q-text">¿Necesitan firma digital o solo visualización?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 12 — RESUMEN ═══════════════ -->
+  <div class="slide" id="s12">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Consolidado</div>
+        <div class="slide-title">Resumen de <span>definiciones</span></div>
+      </div>
+      <div class="s12-body">
+        <table class="def-table">
+          <thead>
+            <tr>
+              <th style="width:180px;">Módulo</th>
+              <th style="width:220px;">Estado México</th>
+              <th>Definición Colombia</th>
+              <th style="width:120px;">Prioridad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                  Comunicación
+                </div>
+              </td>
+              <td><span class="tag tag-green">Activo</span></td>
+              <td><div class="def-edit"><div class="def-edit-line"></div><div class="edit-cursor"></div></div></td>
+              <td><span class="tag">Por definir</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                  Gestión de Servicios
+                </div>
+              </td>
+              <td><span class="tag tag-green">Activo</span></td>
+              <td><div class="def-edit"><div class="def-edit-line"></div></div></td>
+              <td><span class="tag">Por definir</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                  Onboarding 2.0
+                </div>
+              </td>
+              <td><span class="tag tag-orange">En progreso</span></td>
+              <td><div class="def-edit"><div class="def-edit-line"></div></div></td>
+              <td><span class="tag">Por definir</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                  Chatbot AI
+                </div>
+              </td>
+              <td><span class="tag tag-green">Activo</span></td>
+              <td><div class="def-edit"><div class="def-edit-line"></div></div></td>
+              <td><span class="tag">Por definir</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                  Reconocimientos
+                </div>
+              </td>
+              <td><span class="tag tag-green">Activo</span></td>
+              <td><div class="def-edit"><div class="def-edit-line"></div></div></td>
+              <td><span class="tag">Por definir</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+                  Documentos Personales
+                </div>
+              </td>
+              <td><span class="tag tag-orange">En progreso</span></td>
+              <td><div class="def-edit"><div class="def-edit-line"></div></div></td>
+              <td><span class="tag">Por definir</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 16px;background:var(--blue-xlight);border-radius:var(--r-sm);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span style="font-size:13px;color:var(--blue);font-weight:500;">Esta tabla se completa en vivo durante la sesión de discovery.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SLIDE 13 — PRÓXIMOS PASOS ═══════════════ -->
+  <div class="slide" id="s13">
+    <div class="canvas">
+      <div class="logo-mark"><div class="logo-h">H</div><span class="logo-text">Humand</span></div>
+      <div class="slide-header">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Plan</div>
+        <div class="slide-title">Próximos <span>pasos</span></div>
+        <div class="slide-sub">Roadmap de implementación OXXO Colombia</div>
+      </div>
+      <div class="s13-body">
+        <div class="roadmap">
+          <div class="rm-item done">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Discovery</div>
+              <div class="rm-card-sub">Workshop de definición funcional con el equipo</div>
+              <div class="rm-card-status">
+                <div class="rm-card-status-dot" style="background:#0E8A4A;"></div>
+                <div class="rm-card-status-text" style="color:#0E8A4A;">En curso</div>
+              </div>
+            </div>
+          </div>
+          <div class="rm-item current">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Definiciones</div>
+              <div class="rm-card-sub">Documentar decisiones y configuraciones acordadas</div>
+              <div class="rm-card-status">
+                <div class="rm-card-status-dot" style="background:var(--blue);"></div>
+                <div class="rm-card-status-text" style="color:var(--blue);">Siguiente</div>
+              </div>
+            </div>
+          </div>
+          <div class="rm-item">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Configuración</div>
+              <div class="rm-card-sub">Setup de módulos, grupos y contenidos iniciales</div>
+              <div class="rm-card-status">
+                <div class="rm-card-status-dot" style="background:var(--ink-xlight);"></div>
+                <div class="rm-card-status-text" style="color:var(--ink-xlight);">Pendiente</div>
+              </div>
+            </div>
+          </div>
+          <div class="rm-item">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Validación</div>
+              <div class="rm-card-sub">UAT con equipo OXXO Colombia</div>
+              <div class="rm-card-status">
+                <div class="rm-card-status-dot" style="background:var(--ink-xlight);"></div>
+                <div class="rm-card-status-text" style="color:var(--ink-xlight);">Pendiente</div>
+              </div>
+            </div>
+          </div>
+          <div class="rm-item">
+            <div class="rm-node"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <div class="rm-card">
+              <div class="rm-card-title">Lanzamiento</div>
+              <div class="rm-card-sub">Go-live con comunicación interna y soporte</div>
+              <div class="rm-card-status">
+                <div class="rm-card-status-dot" style="background:var(--ink-xlight);"></div>
+                <div class="rm-card-status-text" style="color:var(--ink-xlight);">Pendiente</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="s13-cta">
+          <div>
+            <div class="s13-cta-text">¿Listo para comenzar la implementación?</div>
+            <div class="s13-cta-sub">Humand acompaña a OXXO Colombia en cada paso del proceso</div>
+          </div>
+          <button class="s13-cta-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            Siguiente paso
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end deck -->
+
+<!-- ─── NAVIGATION ────────────────────────────────────── -->
+<div class="nav" id="nav">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" title="Anterior">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="nav-dots" id="navDots"></div>
+  <div class="nav-counter" id="navCounter">1 / 13</div>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)" title="Siguiente">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let current = 0;
+
+  // Build dots
+  const dotsContainer = document.getElementById('navDots');
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    dotsContainer.appendChild(dot);
+  });
+
+  function goTo(idx) {
+    const prev = current;
+    slides[prev].classList.remove('active');
+    slides[prev].classList.add('prev');
+    setTimeout(() => slides[prev].classList.remove('prev'), 500);
+
+    current = (idx + total) % total;
+    slides[current].classList.add('active');
+
+    // update dots
+    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+    document.getElementById('navCounter').textContent = (current + 1) + ' / ' + total;
+  }
+
+  function navigate(dir) { goTo(current + dir); }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navigate(-1); }
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End') goTo(total - 1);
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+  });
+
+  // Responsive scaling
+  function scaleDeck() {
+    const deck = document.getElementById('deck');
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scaleX = vw / 1280;
+    const scaleY = vh / 760;
+    const scale = Math.min(scaleX, scaleY) * 0.94;
+    deck.style.transform = `scale(${scale})`;
+    deck.style.transformOrigin = 'center center';
+  }
+  window.addEventListener('resize', scaleDeck);
+  scaleDeck();
+</script>
+</body>
+</html>
